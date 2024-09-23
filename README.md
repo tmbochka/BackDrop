@@ -1,2 +1,2 @@
-# HSE Lyceum IT Projects - Cherish Memories
+# HSE Lyceum IT Projects - BackDrop
 # Заявка на ИТ-проект и пользовательские сценарии
