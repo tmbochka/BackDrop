@@ -41,14 +41,16 @@
     <div class="logo">
         <span class="logo__text">BackDrop</span>
     </div>
-
     <nav class="main-nav">
         <ul>
-            <li><a href="/">Главная</a></li>
+            <li><a href="/portfolio">Портфолио</a></li>
+            <li><a href="/archiver">Архиватор</a></li>
+            <li><a href="/account">Профиль</a></li>
+            <li><a href="/music">Музыка</a></li>
+            <li><a href="/background">Фон</a></li>
             <li><a href="/instruction">Инструкция</a></li>
-            <li><a href="#0">Язык</a></li>
-            <li><a href="/login">Вход</a></li>
-            <li><a href="/register">Регистрация</a></li>
+            <li><a href="#0" id="languageToggle">Язык</a></li>
+            <li><a href="/logout">Выход</a></li>
             <li><a href="#0">Связаться с нами</a></li>
         </ul>
     </nav>
@@ -60,9 +62,9 @@
 
             <header data-color="#ACB7AE">
                 <h1>
-                    <span>Попробуй все</span>
-                    <span>Возможности</span>
-                    <span>Фона</span>
+                    <span>Добро</span>
+                    <span>Пожаловать,</span>
+                    <span>{{current_user.name}}!</span>
                 </h1>
                 <div class="decor__circle"></div>
                 <div class="header__gallery">

@@ -63,6 +63,10 @@ def confirm_email():
 
     return render_template('confirm_email.html')
 
+@app.route('/account')
+def account():
+    return render_template('account.html')
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -72,12 +76,13 @@ def login():
         user = get_user_by_email(email)
         if user and user.check_password(password):
             login_user(user)
-            return redirect(url_for('index'))
+            return redirect(url_for('account'))
         else:
             flash('Неверный email или пароль.')
             return redirect(url_for('login'))
 
     return render_template('login.html')
+
 
 @app.route('/logout')
 @login_required
@@ -88,4 +93,4 @@ def logout():
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-    app.run(host='127.0.0.1', port=7000, debug=True)
+    app.run(host='127.0.0.1', port=8000, debug=True)
