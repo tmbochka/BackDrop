@@ -1,6 +1,6 @@
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
-from BackDrop.app_and_db import db
+from app_and_db import db
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)

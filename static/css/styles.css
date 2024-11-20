@@ -31,6 +31,7 @@ body {
 /* hide page content by default */
 
 .is-loading #main,
+.is-loading .logo,
 .is-loading .main-nav,
 .is-loading .fill-background {
     display: none;
@@ -52,6 +53,28 @@ body {
     width: 100%;
     top: 0;
     left: 0;
+}
+
+.logo {
+    position: fixed;
+    left: 0;
+    height: var(--header-height);
+    width: 280px;
+    display: flex;
+    align-items: center;
+    z-index: 3;
+    pointer-events: none;
+}
+
+.logo__text {
+    color: var(--text-color);
+    font-size: 3.125vw;
+    font-family: var(--font-headings);
+    letter-spacing: 7px;
+    padding-left: var(--h-gutter);
+    transition: opacity 0.3s linear;
+    opacity: 1;
+    text-transform: uppercase;
 }
 
 
@@ -109,6 +132,10 @@ body {
     transform: translateX(100%);
 }
 
+
+.has-scrolled .logo__text {
+    opacity: 0;
+}   
 
 /* =Header */
 
@@ -170,7 +197,7 @@ header h1 span {
     }
 }
 
-
+/*
 .login .btnLogin-popup {
     color: #fff;
     font-weight: bolder;
@@ -193,10 +220,10 @@ header h1 span {
 }
 
 .wrapper {
-    position: fixed; /* Делаем контейнер фиксированным */
-    top: 50%; /* Центрируем по вертикали */
-    left: 50%; /* Центрируем по горизонтали */
-    transform: translate(-50%, -50%) scale(0); /* Центрируем и скрываем */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
     width: 400px;
     height: 400px;
     background: transparent;
@@ -208,23 +235,23 @@ header h1 span {
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    transition: transform .5s ease, height .2s ease; /* transform .5s ease - плавное открытие */
-    padding: 20px; /* Добавляем отступы */
-    z-index: 1000; /* Убедитесь, что он находится поверх других элементов */
+    transition: transform .5s ease, height .2s ease;
+    padding: 20px;
+    z-index: 1000;
 }
 
 .wrapper.active-popup {
-    transform: translate(-50%, -50%) scale(1); /* Центрируем и показываем */
+    transform: translate(-50%, -50%) scale(1);
 }
 
 .wrapper.active {
-    height: 470px; /* Увеличиваем высоту при активации */
+    height: 470px;
 }
 
 .wrapper .form-box {
     width: 100%;
     padding: 40px;
-    box-sizing: border-box; /* Убедитесь, что padding не увеличивает общую ширину */
+    box-sizing: border-box;
 }
 
 .wrapper .form-box.login {
@@ -248,20 +275,18 @@ header h1 span {
     transform: translateX(0);
 }
 
-/* Добавляем фиксированную высоту для формы Register */
 .form-box.register {
-    height: 350px; /* Фиксированная высота */
+    height: 350px;
     display: flex;
     flex-direction: column;
     justify-content: center;
 }
 
-/* Убедитесь, что все элементы внутри формы Register выровнены правильно */
 .form-box.register .input-box,
 .form-box.register .remember-forgot,
 .form-box.register .btn,
 .form-box.register .login-register {
-    margin: 10px 0; /* Уменьшаем отступы для более компактного вида */
+    margin: 10px 0;
 }
 
 .wrapper .icon-close {
@@ -385,6 +410,7 @@ header h1 span {
 .login-register p a:hover {
     text-decoration: underline;
 }
+*/
 
 /* =Header Gallery (random image proportion) 
     Calculate aspect by setting a width first, then adjust padding bottom.
