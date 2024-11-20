@@ -1,0 +1,139 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+    <meta charset="utf-8">
+    <title>Музыка</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/styles.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap" rel="stylesheet">
+</head>
+
+<body class="is-loading" data-barba="wrapper">
+
+    <div class="loader">
+        <div class="loader__mask">
+            <div class="inner">
+                <div class="progress"></div>
+            </div>
+        </div>
+    </div>
+    <div class="loader__content">
+        <div class="inner">
+            <div class="loader__title">
+                <div class="loader__title--mask"><span>Подождите,</span></div>
+                <div class="loader__title--mask"><span>Идет загрузка</span></div>
+            </div>
+            <div class="loader__image">
+                <div class="loader__image--mask">
+                    <img src="./img/img_landscape-01-large.jpg" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="logo">
+        <span class="logo__text">BackDrop</span>
+    </div>
+    <nav class="main-nav">
+        <ul>
+            <li><a href="index.html" class="lang-link" data-lang="ru">Главная</a></li>
+            <li><a href="portfolio.html" class="lang-link" data-lang="ru">Портфолио</a></li>
+            <li><a href="archiver.html" class="lang-link" data-lang="ru">Архиватор</a></li>
+            <li><a href="profil.html" class="lang-link" data-lang="ru">Профиль</a></li>
+            <li><a href="music.html" class="lang-link" data-lang="ru">Музыка</a></li>
+            <li><a href="background.html" class="lang-link" data-lang="ru">Фон</a></li>
+            <li><a href="#0" id="languageToggle" class="lang-link" data-lang="ru">Язык</a></li>
+            <li><a href="#0" class="lang-link" data-lang="ru">Инструкция</a></li>
+            <li><a href="#0" class="lang-link" data-lang="ru">Связаться с нами</a></li>
+        </ul>
+    </nav>
+
+    <div id="viewport">
+
+        <main id="main" data-barba="container">
+
+            <header data-color="#ACB7AE">
+                <h1>
+                    <span>Музыка</span>
+                </h1>
+                <p class="subtitle">Список композиций</p>
+            </header>
+
+            <section class="music-list">
+                <div class="music-item" data-audio="audio1" style="background-image: url('./img/compose_back/compose1.jpg');">
+                    <h2>Композиция 1</h2>
+                    <audio id="audio1">
+                        <source src="./compose/compose1.mp3" type="audio/mpeg">
+                        Ваш браузер не поддерживает аудио элемент.
+                    </audio>
+                </div>
+                <div class="music-item" data-audio="audio2" style="background-image: url('./img/compose_back/compose2.jpg');">
+                    <h2>Композиция 2</h2>
+                    <audio id="audio2">
+                        <source src="./compose/compose2.mp3" type="audio/mpeg">
+                        Ваш браузер не поддерживает аудио элемент.
+                    </audio>
+                </div>
+                <div class="music-item" data-audio="audio3" style="background-image: url('./img/compose_back/compose3.jpg');">
+                    <h2>Композиция 3</h2>
+                    <audio id="audio3">
+                        <source src="./compose/compose3.mp3" type="audio/mpeg">
+                        Ваш браузер не поддерживает аудио элемент.
+                    </audio>
+                </div>
+                <div class="music-item" data-audio="audio4" style="background-image: url('./img/compose_back/compose4.jpg');">
+                    <h2>Композиция 4</h2>
+                    <audio id="audio4">
+                        <source src="./compose/compose4.mp3" type="audio/mpeg">
+                        Ваш браузер не поддерживает аудио элемент.
+                    </audio>
+                </div>
+                <div class="music-item" data-audio="audio5" style="background-image: url('./img/compose_back/compose5.jpg');">
+                    <h2>Композиция 5</h2>
+                    <audio id="audio5">
+                        <source src="./compose/compose5.mp3" type="audio/mpeg">
+                        Ваш браузер не поддерживает аудио элемент.
+                    </audio>
+                </div>
+                <div class="music-item" data-audio="audio6" style="background-image: url('./img/compose_back/compose6.jpg');">
+                    <h2>Композиция 6</h2>
+                    <audio id="audio6">
+                        <source src="./compose/compose6.mp3" type="audio/mpeg">
+                        Ваш браузер не поддерживает аудио элемент.
+                    </audio>
+                </div>
+                <div class="music-item" data-audio="audio7" style="background-image: url('./img/compose_back/compose7.jpg');">
+                    <h2>Композиция 7</h2>
+                    <audio id="audio7">
+                        <source src="./compose/compose7.mp3" type="audio/mpeg">
+                        Ваш браузер не поддерживает аудио элемент.
+                    </audio>
+                </div>
+
+            </section>
+
+        </main>
+        <!-- #main-container -->
+
+        <!-- fill background between sections with margin - eg. portfolio  -->
+        <aside class="fill-background"></aside>
+
+    </div>
+    <!-- #viewport -->
+
+    <script src="https://unpkg.com/@barba/core"></script>
+    <script src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.4.0/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.4.0/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/smooth-scrollbar@latest/dist/smooth-scrollbar.js"></script>
+    <script src="js/main.js" defer></script>
+
+</body>
+
+</html>

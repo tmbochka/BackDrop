@@ -1,0 +1,993 @@
+:root {
+    --text-color: white;
+    --text-dark-color: #202020;
+    --header-height: 100px;
+    --font-headings: Georgia, serif;
+    --bcg-green: #ACB7AE;
+    --bcg-lightgreen: #a6b3b3;
+    --bcg-lightbrown: #b0a7a4;
+    --bcg-lightblue: #a3abb1;
+    --bcg-loaderblue: #758A94;
+    --bcg-loaderbluedark: #566C76;
+    --bcg-fill-color: var(--bcg-green);
+    --loader-width: 27.36vw;
+    --loader-height: 50vh;
+    --v-spacing: 10vh;
+    --h-gutter: 6.6vw;
+    --easing: cubic-bezier(0.5, 0.7, 0.4, 1);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font: 16px/1.7 'Source Sans Pro', Helvetica, Helvetica Neue, Arial, sans-serif;
+    color: var(--text-dark-color);
+    transition: background-image 0.5s ease; /* Добавьте это для плавного перехода */
+}
+
+
+/* hide page content by default */
+
+.is-loading #main,
+.is-loading .main-nav,
+.is-loading .fill-background {
+    display: none;
+}
+
+.is-loading {
+    background-color: var(--bcg-loaderblue);
+}
+
+.is-transitioning {
+    pointer-events: none;
+    cursor: progress;
+}
+
+#viewport {
+    overflow: hidden;
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+}
+
+
+/* =Main Navigation */
+.main-nav {
+    position: fixed;
+    top: 0;
+    right: calc(var(--h-gutter) + 3vw); /* Исходный стиль */
+    right: calc(var(--h-gutter) - 7vw); /* Смещение левее */
+    z-index: 3;
+}
+
+.main-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+}
+
+.main-nav li {
+    padding: 0;
+    margin-right: 3vw;
+    height: var(--header-height);
+    display: flex;
+    align-items: center;
+}
+
+.main-nav a {
+    color: var(--text-color);
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.1vw;
+    position: relative;
+    overflow: hidden;
+}
+
+.main-nav a::after {
+    display: block;
+    content: '';
+    height: 2px;
+    background-color: var(--text-color);
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    transform: translateX(-101%);
+}
+
+.main-nav a:hover::after {
+    transition: transform 0.3s var(--easing);
+    transform: translateX(0);
+}
+
+.main-nav a.animate-out::after {
+    transition: transform 0.3s var(--easing);
+    transform: translateX(100%);
+}
+
+
+/* =Header */
+
+header {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    flex-direction: column;
+    perspective: 1000px;
+    z-index: 2;
+}
+
+header h1 {
+    font-family: var(--font-headings);
+    font-weight: normal;
+    color: #fff;
+    font-size: 7vw;
+    line-height: 7.4vw;
+    z-index: 1;
+    margin-bottom: 0;
+    pointer-events: none;
+}
+
+header h1 span {
+    display: block;
+}
+
+.subtitle {
+    z-index: 1;
+    font-size: 1.3vw;
+    color: #fff;
+    letter-spacing: 0.3vw;
+    transform: translateX(-9vw);
+    font-weight: 300;
+    pointer-events: none;
+}
+
+
+.decor__circle {
+    border: 1px white solid;
+    border-radius: 100%;
+    width: 23vw;
+    height: 23vw;
+    position: absolute;
+    top: 45vh;
+    left: 27vw;
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+
+.login .btnLogin-popup {
+    color: #fff;
+    font-weight: bolder;
+    width: 250px;
+    height: 70px;
+    background: transparent;
+    border: 2px solid #fff;
+    outline: none;
+    border-radius: 40px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: 500;
+    margin-top: 30px;
+    transition: .5s;
+}
+
+.login .btnLogin-popup:hover {
+    background: #fff;
+    color: #162938;
+}
+
+.wrapper {
+    position: fixed; /* Делаем контейнер фиксированным */
+    top: 50%; /* Центрируем по вертикали */
+    left: 50%; /* Центрируем по горизонтали */
+    transform: translate(-50%, -50%) scale(0); /* Центрируем и скрываем */
+    width: 400px;
+    height: 400px;
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, .5);
+    border-radius: 20px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 0 30px rgba(0, 0, 0, .5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    transition: transform .5s ease, height .2s ease; /* transform .5s ease - плавное открытие */
+    padding: 20px; /* Добавляем отступы */
+    z-index: 1000; /* Убедитесь, что он находится поверх других элементов */
+}
+
+.wrapper.active-popup {
+    transform: translate(-50%, -50%) scale(1); /* Центрируем и показываем */
+}
+
+.wrapper.active {
+    height: 470px; /* Увеличиваем высоту при активации */
+}
+
+.wrapper .form-box {
+    width: 100%;
+    padding: 40px;
+    box-sizing: border-box; /* Убедитесь, что padding не увеличивает общую ширину */
+}
+
+.wrapper .form-box.login {
+    transition: transform .18s ease;
+    transform: translateX(0);
+}
+
+.wrapper.active .form-box.login {
+    transition: none;
+    transform: translateX(-400px);
+}
+
+.wrapper .form-box.register {
+    position: absolute;
+    transition: none;
+    transform: translateX(400px);
+}
+
+.wrapper.active .form-box.register {
+    transition: transform .18s ease;
+    transform: translateX(0);
+}
+
+/* Добавляем фиксированную высоту для формы Register */
+.form-box.register {
+    height: 350px; /* Фиксированная высота */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Убедитесь, что все элементы внутри формы Register выровнены правильно */
+.form-box.register .input-box,
+.form-box.register .remember-forgot,
+.form-box.register .btn,
+.form-box.register .login-register {
+    margin: 10px 0; /* Уменьшаем отступы для более компактного вида */
+}
+
+.wrapper .icon-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 45px;
+    height: 45px;
+    background: #162938;
+    font-size: 2em;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-top-left-radius: 20px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.form-box h2 {
+    font-size: 2em;
+    color: #162938;
+    text-align: center;
+}
+
+.input-box {
+    position: relative;
+    width: 100%;
+    height: 50px;
+    border-bottom: 2px solid #162938;
+    margin: 30px 0;
+}
+
+.input-box label {
+    position: absolute;
+    top: 50%;
+    left: 5px;
+    transform: translateY(-50%);
+    font-size: 1em;
+    color: #162938;
+    font-weight: 500;
+    pointer-events: none;
+    transition: .5s;
+}
+
+.input-box input:focus~label,
+.input-box input:valid~label {
+    top: -5px;
+}
+
+.input-box input {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 1em;
+    color: #162938;
+    font-weight: 600;
+    padding: 0 35px 0 5px;
+}
+
+.input-box .icon {
+    position: absolute;
+    right: 8px;
+    font-size: 1.2em;
+    color: #162938;
+    line-height: 57px;
+}
+
+.remember-forgot {
+    font-size: .9em;
+    color: #162938;
+    font-weight: 500;
+    margin: -15px 0 15px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.remember-forgot label input {
+    accent-color: #162938;
+    margin-right: 3px;
+}
+
+.remember-forgot a {
+    color: #162938;
+    text-decoration: none;
+}
+
+.remember-forgot a:hover {
+    text-decoration: underline;
+}
+
+.btn {
+    width: 100%;
+    height: 45px;
+    background: #162938;
+    border: none;
+    outline: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1em;
+    color: #fff;
+    font-weight: 500;
+}
+
+.login-register {
+    font-size: .9em;
+    color: #162938;
+    text-align: center;
+    font-weight: 500;
+    margin: 25px 0 10px;
+}
+
+.login-register p a {
+    color: #162938;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.login-register p a:hover {
+    text-decoration: underline;
+}
+
+/* =Header Gallery (random image proportion) 
+    Calculate aspect by setting a width first, then adjust padding bottom.
+    Example for image that you want to show as 16/9 - landscape
+    width: 24vw, padding-bottom: (9/16) * width = 13.5
+    
+    Example for image that you want to show as 9/16 - portrait
+    width: 24vw, padding-bottom: (16/9) * width = 42.6
+  
+    Have fun:)
+  
+  */
+
+.hg__image,
+.rg__image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #000000;
+    pointer-events: none;
+}
+
+.hg__image--l {
+    width: 20vw;
+    padding-bottom: 26vw;
+}
+
+.hg__image--m {
+    width: 18vw;
+    padding-bottom: 26.55vw;
+}
+
+.hg__image--s {
+    width: 13vw;
+    padding-bottom: 19vw;
+}
+
+.hg__image img,
+.stage__image img,
+.loader__image img {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    object-fit: cover;
+    object-position: 50% 50%;
+    opacity: 0.8
+}
+
+.hg__left .hg__image:nth-child(1) {
+    top: 17vh;
+    left: 15vw;
+}
+
+.hg__left .hg__image:nth-child(2) {
+    top: 30vh;
+    left: 6vw;
+}
+
+.hg__left .hg__image:nth-child(3) {
+    top: 56vh;
+    left: 14vw;
+}
+
+.hg__right .hg__image:nth-child(1) {
+    top: 15vh;
+    left: auto;
+    right: 21vw;
+    width: 24vw;
+    padding-bottom: 21vw;
+}
+
+.hg__right .hg__image:nth-child(2) {
+    top: 27vh;
+    left: auto;
+    right: 10vw;
+}
+
+.hg__right .hg__image:nth-child(3) {
+    top: 56vh;
+    left: auto;
+    right: 19vw;
+    width: 16vw;
+    padding-bottom: 20vw;
+    z-index: 1;
+}
+
+
+/* =Loader */
+.loader,
+.loader__content {
+    min-height: 100vh;
+    position: fixed;
+    flex-direction: column;
+    z-index: 4;
+    top: 0;
+    left: 0;
+    width: 100%;
+    visibility: hidden;
+    overflow: hidden;
+}
+
+.loader__mask {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    background: var(--bcg-loaderblue) no-repeat center;
+    background-size: 155px 155px;
+    overflow: hidden;
+}
+
+.loader .inner,
+.loader__content .inner {
+    width: var(--loader-width);
+    height: var(--loader-height);
+}
+
+.loader .inner {
+    background-color: var(--bcg-loaderbluedark);
+    position: relative;
+}
+
+.loader .progress {
+    background-color: var(--bcg-lightblue);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: var(--loader-width);
+    height: var(--loader-height);
+}
+
+.loader__content {
+    z-index: 4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+    visibility: hidden;
+    /* hide loader content by default */
+}
+
+.loader__title {
+    font-size: 7vw;
+    line-height: 8vw;
+    margin: 0;
+    font-family: var(--font-headings);
+    color: var(--text-color);
+    font-weight: normal;
+    position: absolute;
+    text-align: center;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 5;
+}
+
+.loader__image {
+    width: var(--loader-width);
+    padding-bottom: 50vh;
+    overflow: hidden;
+    position: relative;
+}
+
+.loader__title--mask {
+    overflow: hidden;
+}
+
+.loader__title--mask span {
+    display: block;
+}
+
+.loader__image--mask {
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}
+
+
+/* =Main */
+
+main {
+    z-index: 1;
+    position: relative;
+}
+
+section {
+    position: relative;
+}
+
+.with-padding {
+    padding: var(--v-spacing) 0;
+}
+
+.with-padding-bottom {
+    padding-bottom: var(--v-spacing);
+}
+
+.chapter {
+    position: absolute;
+    left: var(--h-gutter);
+    top: var(--v-spacing);
+    z-index: 2;
+    color: var(--text-color);
+    font-size: 1.6vw;
+}
+
+.chapter span {
+    opacity: 0.4;
+}
+
+
+/* =Portfolio */
+
+.portfolio {
+    margin-top: var(--v-spacing);
+}
+
+.portfolio .chapter {
+    color: var(--text-dark-color);
+    top: 0;
+}
+
+.portfolio__categories {
+    display: flex;
+    flex-direction: column;
+}
+
+.portfolio__categories a {
+    font-family: var(--font-headings);
+    color: var(--text-dark-color);
+    text-decoration: none;
+    font-size: 5.4vw;
+    margin: auto;
+    letter-spacing: 0.2vw;
+    line-height: 1.5;
+}
+
+.portfolio__categories a:hover {
+    z-index: 1;
+}
+
+.portfolio__image--l,
+.portfolio__image--s {
+    pointer-events: none;
+    /* important to be able to hover over links under the image */
+    position: absolute;
+    width: 28vw;
+    top: 11vh;
+    left: 24vw;
+    overflow: hidden;
+    background-color: #000;
+    visibility: hidden;
+}
+
+.portfolio__image--l {
+    padding-bottom: 41.66vw;
+}
+
+.portfolio__image--s {
+    width: 15vw;
+    top: 25vh;
+    left: 54vw;
+    padding-bottom: 20vw;
+}
+
+.image_inside {
+    position: absolute;
+    opacity: 0.8;
+    top: -10%;
+    left: 0;
+    width: 100%;
+    height: 115%;
+    background-size: cover;
+}
+
+.fill-background {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    will-change: background-color;
+    background-color: var(--bcg-fill-color);
+    transition: background-color 0.3s linear;
+}
+
+
+/* =About Us */
+.about-us {
+    color: var(--text-color);
+}
+
+.about-us .chapter {
+    top: inherit;
+    left: inherit;
+    position: relative;
+    margin: 0 var(--h-gutter) var(--v-spacing) var(--h-gutter);
+}
+
+.about-us__content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 var(--h-gutter);
+}
+
+.about-us__image {
+    width: 40%;
+    padding-bottom: 40%;
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+.about-us__image img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.9;
+}
+
+.about-us__text {
+    width: 55%;
+    font-size: 1.2vw;
+    line-height: 1.5;
+}
+
+.about-us__text h3 {
+    font-family: var(--font-headings);
+    font-size: 2.5vw;
+    line-height: 2;
+    font-weight: normal;
+    letter-spacing: 0.1vw;
+    margin-bottom: 1vw;
+}
+
+.about-us__text p {
+    font-size: 1.5vw;
+    margin-bottom: 1vw;
+}
+
+
+/* =How we work */
+
+.how-we-work .chapter {
+    top: calc(var(--v-spacing)*2);
+}
+
+.fixed-nav {
+    position: absolute;
+    top: calc(var(--v-spacing)*3);
+    left: var(--h-gutter);
+}
+
+.fixed-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0
+}
+
+.fixed-nav li {
+    overflow: hidden;
+}
+
+.fixed-nav a {
+    color: var(--text-color);
+    text-decoration: none;
+    font-family: var(--font-headings);
+    position: relative;
+    padding-left: 1.8vw;
+    transform: translateX(-1.8vw);
+    display: block;
+    opacity: 0.4;
+    transition: all 0.3s var(--easing);
+}
+
+.fixed-nav li a::before {
+    content: '';
+    display: block;
+    height: 2px;
+    width: 1.3vw;
+    background-color: var(--text-color);
+    position: absolute;
+    top: 50%;
+    left: 0;
+}
+
+.fixed-nav li.is-active a {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.stage__heading {
+    font-family: var(--font-headings);
+    position: relative;
+    z-index: 2;
+    /* fix for Safari */
+}
+
+.stage__heading h3,
+.stage__heading p {
+    position: absolute;
+    left: 25vw;
+    top: calc(var(--v-spacing) * -1.25);
+    font-size: 3.6vw;
+    font-weight: normal;
+    margin: 0;
+    white-space: nowrap;
+    color: var(--text-color);
+}
+
+.stage__heading p {
+    font-size: 1.6vw;
+    opacity: 0.4;
+    top: calc(var(--v-spacing) * -1.75);
+}
+
+.stage__image {
+    width: calc(50vw + var(--h-gutter));
+    margin: 0 var(--h-gutter) 0 33.33vw;
+    padding-bottom: 33.33vw;
+    background-color: #a3abb1;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+    /* fix for Safari */
+}
+
+.stage__image img {
+    opacity: 1;
+    height: 110%;
+    top: -7%;
+}
+
+.stage__text {
+    color: var(--text-color);
+    margin: 0 calc(30vw + var(--h-gutter)) var(--v-spacing) 33.33vw;
+}
+
+/* Скрыть стандартные элементы управления аудио */
+audio {
+    display: none;
+}
+/* Стили для кнопки управления музыкой */
+.music-control {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+}
+.music-control__button {
+    width: 40px;
+    height: 40px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+}
+.music-control__button:hover {
+    transform: scale(1.1);
+}
+.music-control__icon {
+    width: 20px;
+    height: 20px;
+    background-image: url('path/to/play-icon.svg');
+    background-size: cover;
+}
+.music-control__button.playing .music-control__icon {
+    background-image: url('path/to/pause-icon.svg');
+}
+
+/* =Music List */
+.music-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    padding: 20px;
+}
+
+.music-item {
+    width: 400px;
+    height: 400px;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+
+.music-item:hover {
+    transform: scale(1.05);
+}
+
+.music-item h2 {
+    font-size: 18px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.music-item audio {
+    display: none;
+}
+
+
+/* Добавьте это в ваш файл styles.css */
+.background-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.background-item {
+    width: 100%;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    background-color: var(--color);
+}
+
+.background-item:hover {
+    transform: scale(1.05);
+}
+
+.background-item h2 {
+    font-size: 18px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+/* =Instruction */
+.instruction {
+    color: var(--text-dark-color);
+}
+
+.instruction .chapter {
+    top: inherit;
+    left: inherit;
+    position: relative;
+    margin: 0 var(--h-gutter) var(--v-spacing) var(--h-gutter);
+}
+
+.instruction__content {
+    margin: 0 var(--h-gutter);
+}
+
+.instruction__content h2 {
+    font-family: var(--font-headings);
+    font-size: 2.5vw;
+    line-height: 2;
+    font-weight: normal;
+    letter-spacing: 0.1vw;
+    margin-bottom: 1vw;
+}
+
+.instruction__content p {
+    font-size: 1.5vw;
+    margin-bottom: 1vw;
+}
+
+.instruction__content ol {
+    list-style-type: decimal;
+    padding-left: 2vw;
+}
+
+.instruction__content li {
+    margin-bottom: 1vw;
+}
+
+.instruction__content li p {
+    font-size: 1.2vw;
+}
+
+
+@media only screen and (min-width: 480px) {}
+
+@media only screen and (min-width: 768px) {}
+
+@media only screen and (min-width: 1140px) {}

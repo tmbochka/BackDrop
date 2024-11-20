@@ -1,0 +1,282 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+    <meta charset="utf-8">
+    <title>BackDrop</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="./static/css/normalize.css">
+    <link rel="stylesheet" href="./static/css/main.css">
+    <link rel="stylesheet" href="./static/css/styles.css">
+    <script src="/static/js/main.js" defer></script>
+
+
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap" rel="stylesheet">
+</head>
+
+<body class="is-loading" data-barba="wrapper">
+
+    <div class="loader">
+        <div class="loader__mask">
+            <div class="inner">
+                <div class="progress"></div>
+            </div>
+        </div>
+    </div>
+    <div class="loader__content">
+        <div class="inner">
+            <div class="loader__title">
+                <div class="loader__title--mask"><span>Добро</span></div>
+                <div class="loader__title--mask"><span>Пожаловать!</span></div>
+            </div>
+            <div class="loader__image">
+                <div class="loader__image--mask">
+                    <img src="./static/img/aest.jpg" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="logo">
+        <span class="logo__text">BackDrop</span>
+    </div>
+    <nav class="main-nav">
+        <ul>
+            <li><a href="index.html">Главная</a></li>
+            <li><a href="portfolio.html">Портфолио</a></li>
+            <li><a href="archiver.html">Архиватор</a></li>
+            <li><a href="profil.html">Профиль</a></li>
+            <li><a href="music.html">Музыка</a></li>
+            <li><a href="background.html">Фон</a></li>
+            <li><a href="instruction.html">Инструкция</a></li>
+            <li><a href="#0" id="languageToggle">Язык</a></li>
+            <li><a href="#0">Связаться с нами</a></li>
+        </ul>
+    </nav>
+
+    <div id="viewport">
+
+        <main id="main" data-barba="container">
+
+            <header data-color="#ACB7AE">
+                <h1>
+                    <span>Попробуй все</span>
+                    <span>Возможности</span>
+                    <span>Фона</span>
+                </h1>
+
+                <nav class="login">
+                    <button class="btnLogin-popup">Login</button>
+                </nav>
+
+                <div class="wrapper">
+                    <span class="icon-close"><ion-icon name="close"></ion-icon></span>
+                    <div class="form-box login">
+                        <h2>Login</h2>
+                        <form action="#">
+                            <div class="input-box">
+                                <span class="icon"><ion-icon name="mail"></ion-icon></span>
+                                <input type="email" required>
+                                <label>Email</label>
+                            </div>
+                            <div class="input-box">
+                                <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
+                                <input type="password" required>
+                                <label>Password</label>
+                            </div>
+                            <div class="remember-forgot">
+                                <label><input type="checkbox">Remember me</label>
+                                <a href="#">Forgot password?</a>
+                            </div>
+                            <button type="submit" class="btn">Login</button>
+                            <div class="login-register">
+                                <p>Don't have an account?<a href="#"
+                                class="register-link">Register</a></p>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <div class="form-box register">
+                        <h2>Registration</h2>
+                        <form method="POST" action="{{ url_for('register') }}">
+                        <form action="#">
+                            <div class="input-box">
+                                <span class="icon"><ion-icon name="person"></ion-icon></span>
+                                <input type="text" required>
+                                <label>Username</label>
+                            </div>
+                            <div class="input-box">
+                                <span class="icon"><ion-icon name="mail"></ion-icon></span>
+                                <input type="email" required>
+                                <label>Email</label>
+                            </div>
+                            <div class="input-box">
+                                <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
+                                <input type="password" required>
+                                <label>Password</label>
+                            </div>
+                            <div class="remember-forgot">
+                                <label><input type="checkbox">I agree to the terms & conditions</label>
+                            </div>
+                            <button type="submit" class="btn">Register</button>
+                            <div class="login-register">
+                                <p>Already have an account?<a href="#"
+                                class="login-link">Login</a></p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="decor__circle"></div>
+                <div class="header__gallery">
+                    <div class="hg__left">
+                        <div class="hg__image hg__image--l">
+                            <img src="./static/img/grey_laps.jpg" />
+                        </div>
+                        <div class="hg__image hg__image--m">
+                            <img src="./static/img/img_landscape-02-large.jpg" />
+                        </div>
+                        <div class="hg__image hg__image--s">
+                            <img src="./static/img/lala.jpg" />
+                        </div>
+                    </div>
+                    <div class="hg__right">
+                        <div class="hg__image hg__image--l">
+                            <img src="./static/img/laps.jpg" />
+                        </div>
+                        <div class="hg__image hg__image--m">
+                            <img src="./static/img/no_laps.jpg" />
+                        </div>
+                        <div class="hg__image hg__image--s">
+                            <img src="./static/img/meow.jpg" />
+                        </div>
+                    </div>
+                </div>
+                <div class="cta__circle">
+                    <div class="cta__circle--logo"></div>
+                </div>
+            </header>
+
+            <!-- Portfolio - fade background colors on hover-->
+            <section class="portfolio with-padding">
+                <h2 class="chapter">
+                    <span>001 -</span> Возможности
+                </h2>
+                <div class="portfolio__categories">
+                    <a href="#0" data-color="#b3a8b3" data-imagelarge="./static/img/myrrr_fon.jpg" data-imagesmall="./static/img/myr.jpg">Удаление полностью</a>
+                    <a href="#0" data-color="#bab6a8" data-imagelarge="./static/img/gol_fon.jpg" data-imagesmall="./static/img/gol.jpg">Замена на цвет</a>
+                    <a href="#0" data-color="#b3a8b3" data-imagelarge="./static/img/duck_fon.jpg" data-imagesmall="./static/img/duck.jpg">Замена на изображение</a>
+                    <a href="#0" data-color="#a3b1ae" data-imagelarge="./static/img/vod_vod.jpg" data-imagesmall="./static/img/vod.jpg">Водяной знак</a>
+                </div>
+                <div class="portfolio__image--l">
+                    <div class="image_inside" style="background-image: url('./static/img/img_portfolio-02-480-720.jpg')"></div>
+                </div>
+                <div class="portfolio__image--s">
+                    <div class="image_inside" style="background-image: url('./static/img/img_portfolio-01-480-720.jpg')"></div>
+                </div>
+            </section>
+            <!-- /Portfolio -->
+
+            <!-- How We Work -->
+            <section class="how-we-work with-padding">
+                <h2 class="chapter">
+                    <span>002 -</span> Технологии
+                </h2>
+                <div class="fixed-nav">
+                    <ul>
+                        <li class="is-active"><a href="#stage1">Семантическая сегментация</a></li>
+                        <li><a href="#stage2">Модель</a></li>
+                        <li><a href="#stage3">Функция потерь</a></li>
+                        <li><a href="#stage4">Итог</a></li>
+                    </ul>
+                </div>
+                <div id="stage1" class="stage with-parallax" data-color="#8c8480">
+                    <div class="stage__image">
+                        <img src="./static/img/dogs.jpg" />
+                    </div>
+                    <div class="stage__heading">
+                        <p>01</p>
+                        <h3>Семантическая сегментация</h3>
+                    </div>
+                    <div class="stage__text">
+                        <p>По факту, отделение фона от изображение это разбиение картинки на два класса - фон и оставшаяся часть</p>
+                    </div>
+                </div>
+                <div id="stage2" class="stage with-parallax" data-color="#505156">
+                    <div class="stage__image">
+                        <img src="./static/img/fish.jpg" />
+                    </div>
+                    <div class="stage__heading">
+                        <p>02</p>
+                        <h3>Модель</h3>
+                    </div>
+                    <div class="stage__text">
+                        <p>Была обучена новая модель бла бла бла</p>
+                    </div>
+                </div>
+                <div id="stage3" class="stage with-parallax" data-color="#717872">
+                    <div class="stage__image">
+                        <img src="./static/img/loss.jpg" />
+                    </div>
+                    <div class="stage__heading">
+                        <p>03</p>
+                        <h3>Функция потерь</h3>
+                    </div>
+                    <div class="stage__text">
+                        <p>бла блаб бла</p>
+                    </div>
+                </div>
+                <div id="stage4" class="stage with-parallax" data-color="#ccb28b">
+                    <div class="stage__image">
+                        <img src="./static/img/igogo.jpg" />
+                    </div>
+                    <div class="stage__heading">
+                        <p>04</p>
+                        <h3>Итог</h3>
+                    </div>
+                    <div class="stage__text">
+                        <p>Что-то вышло</p>
+                    </div>
+                </div>
+            </section>
+            <!-- /How We Work -->
+
+            <!-- About Us -->
+            <section class="about-us with-padding-bottom with-parallax">
+                <h2 class="chapter">
+                    <span>003 -</span> Связаться с нами
+                </h2>
+                <div class="about-us__content">
+                    <div class="about-us__image">
+                        <img src="./static/img/photo.jpg" />
+                    </div>
+                    <div class="about-us__text">
+                        <h3>Обещаем ответить когда-нибудь</h3>
+                        <p>Напишите нам:</p>
+                        <p>Почта: julialatypova52@gmail.com</p>
+                        <p>Телеграм: @tmbochka</p>
+                    </div>
+                </div>
+            </section>
+            <!-- /About Us -->
+
+        </main>
+        <!-- #main-container -->
+
+        <!-- fill background between sections with margin - eg. portfolio  -->
+        <aside class="fill-background"></aside>
+
+    </div>
+    <!-- #viewport -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>    
+    <script src="https://unpkg.com/@barba/core"></script>
+    <script src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.4.0/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.4.0/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/smooth-scrollbar@latest/dist/smooth-scrollbar.js"></script>
+
+</body>
+
+</html>
