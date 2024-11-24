@@ -33,7 +33,7 @@
             </div>
             <div class="loader__image">
                 <div class="loader__image--mask">
-                    <img src="{{ url_for('static', filename='img/aest.jpg') }}" />
+                    <img src="{{ url_for('static', filename='img/onyx.jpg') }}" />
                 </div>
             </div>
         </div>
@@ -52,7 +52,7 @@
             <li><a href="/instruction">Инструкция</a></li>
             <li><a href="#0">Язык</a></li>
             <li><a href="/profile">Выход</a></li>
-            <li><a href="#contact-us" id="contact-link">Связаться с нами</a></li>
+            <li><a href="#0">Связаться с нами</a></li>
         </ul>
     </nav>
 
@@ -62,32 +62,52 @@
                 <h1>
                     <span>Портфолио</span>
                 </h1>
+            </header>
+
+            <div class="portfolio__content">
                 <div class="portfolio-tabs">
                     <button class="tab-button active" data-tab="works">Работы</button>
                     <button class="tab-button" data-tab="archives">Архивы</button>
                 </div>
-                <a href="{{ url_for('upload') }}" class="btn upload-btn">Пополнить свое портфолио</a>
-            </header>
-            <section class="portfolio with-padding">
-                <div id="works" class="tab-content active">
-                    <div class="portfolio__gallery-container">
-                        <div class="portfolio__gallery">
-                            {% for image in images %}
-                                <img src="{{ url_for('static', filename='uploads/' + image.processed_filename) }}" alt="Работа">
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-                <div id="archives" class="tab-content">
-                    <div class="archives__content">
-                        <p>Здесь находится контент для раздела "Архивы".</p>
-                        <p>Вы можете добавить сюда любой контент, который вам нужен.</p>
-                        {% for archive in archives %}
-                            <a href="{{ url_for('download', filename=archive.filename) }}">{{ archive.filename }}</a>
+
+                <div id="works" class="tab-content" style="display: block;">
+                    <h2>Работы</h2>
+                    <a href="/upload" class="btn">Пополнить портфолио</a>
+                    <div class="portfolio__gallery">
+                        {% for image in images %}
+                            <div class="portfolio__item">
+                                <img src="{{ url_for('static', filename='uploads/' + image.filename) }}" alt="Фотография" loading="lazy">
+                                <div class="portfolio__info">
+                                    <h3>{{ image.filename }}</h3>
+                                    <a href="{{ url_for('download', filename=image.filename) }}" class="btn">Скачать</a>
+                                    <form action="{{ url_for('delete_image', filename=image.filename) }}" method="post" style="display:inline;">
+                                        <button type="submit" class="btn delete-btn">Удалить</button>
+                                    </form>
+                                </div>
+                            </div>
                         {% endfor %}
                     </div>
                 </div>
-            </section>
+
+                <div id="archives" class="tab-content" style="display: none;">
+                    <h2>Архивы</h2>
+                    <a href="/archiver" class="btn">Еще нет архива?</a>
+                    <div class="archives__grid">
+                        {% for archive in archives %}
+                            <div class="archive__item">
+                                <img src="{{ url_for('static', filename='img/onyx.jpg') }}" alt="Фотография из архива" loading="lazy">
+                                <div class="archive__info">
+                                    <h3>{{ archive.filename }}</h3>
+                                    <a href="{{ url_for('download', filename=archive.filename) }}" class="btn" download>Скачать</a>
+                                    <form action="{{ url_for('delete_archive', filename=archive.filename) }}" method="post" style="display:inline;">
+                                        <button type="submit" class="btn delete-btn">Удалить</button>
+                                    </form>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
         </main>
         <aside class="fill-background"></aside>
     </div>
