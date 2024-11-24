@@ -50,9 +50,9 @@
             <li><a href="/music">Музыка</a></li>
             <li><a href="/background">Фон</a></li>
             <li><a href="/instruction">Инструкция</a></li>
-            <li><a href="#0">Язык</a></li>
+            <li><a href="#1">Язык</a></li>
             <li><a href="/profile">Выход</a></li>
-            <li><a href="#contact-us" id="contact-link">Связаться с нами</a></li>
+            <li><a href="#0">Связаться с нами</a></li>
         </ul>
     </nav>
 
@@ -138,7 +138,7 @@
                         <h3>Сегментация</h3>
                     </div>
                     <div class="stage__text">
-                        <p>МОдель получает изображения масок: отдельно фон, отдельно объект</p>
+                        <p>Модель получает изображения масок: отдельно фон, отдельно объект</p>
                     </div>
                 </div>
                 <div id="stage2" class="stage with-parallax" data-color="#505156">
@@ -169,7 +169,7 @@
             <!-- /Results -->
 
             <!-- Contact Us -->
-            <section class="about-us with-padding-bottom with-parallax">
+            <section id="contact-us" class="about-us with-padding-bottom with-parallax">
                 <h2 class="chapter">
                     <span>003 -</span> Связаться с нами
                 </h2>
@@ -202,21 +202,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.4.0/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.4.0/ScrollTrigger.min.js"></script>
     <script src="https://unpkg.com/smooth-scrollbar@latest/dist/smooth-scrollbar.js"></script>
-
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const contactLink = document.getElementById('contact-link');
-        const contactSection = document.getElementById('contact-us');
-
-        if (contactLink && contactSection) {
-            contactLink.addEventListener('click', function(event) {
-                event.preventDefault();
-                contactSection.scrollIntoView({ behavior: 'smooth' });
-            });
-        }
-    });
-    </script>
-
 </body>
 
 </html>
