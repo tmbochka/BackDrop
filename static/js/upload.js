@@ -1,66 +1,130 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const uploadForm = document.getElementById('uploadForm');
-    const applyModelButton = document.getElementById('applyModel');
+document.getElementById('applyModel').addEventListener('click', function() {
+    const fileInput = document.getElementById('file');
+    const modelSelect = document.getElementById('model');
+    const backgroundOption = document.getElementById('backgroundOption').value;
     const processedImageContainer = document.getElementById('processedImageContainer');
-    const saveToComputerButton = document.getElementById('saveToComputer');
-    const saveToPortfolioButton = document.getElementById('saveToPortfolio');
-    const saveToArchivesButton = document.getElementById('saveToArchives');
 
-    let processedImage = null;
+    if (fileInput.files.length === 0) {
+        alert('Пожалуйста, выберите файл.');
+        return;
+    }
 
-    applyModelButton.addEventListener('click', async function() {
-        const fileInput = document.getElementById('file');
-        const modelSelect = document.getElementById('model');
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+    formData.append('model', modelSelect.value);
+    formData.append('backgroundOption', backgroundOption);
+    formData.append('filename', fileInput.files[0].name);
 
-        if (fileInput.files.length === 0) {
-            alert('Пожалуйста, выберите файл.');
-            return;
+    let url = '/process_image_tracer';
+
+    fetch(url, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const imgAlpha = document.createElement('img');
+            imgAlpha.src = '/uploads/' + data.result_alpha_filename;
+            const imgColor = document.createElement('img');
+            imgColor.src = '/uploads/' + data.result_color_filename;
+            processedImageContainer.innerHTML = '';
+            processedImageContainer.appendChild(imgAlpha);
+            processedImageContainer.appendChild(imgColor);
+        } else {
+            alert(data.message);
         }
-
-        const file = fileInput.files[0];
-        const model = modelSelect.value;
-
-        // Здесь должна быть логика для обработки изображения с использованием выбранной модели
-        // Для примера, просто отобразим загруженное изображение
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            processedImage = event.target.result;
-            processedImageContainer.innerHTML = `<img src="${processedImage}" alt="Обработанное изображение">`;
-        };
-        reader.readAsDataURL(file);
+    })
+    .catch(error => {
+        alert('Ошибка: ' + error.message);
     });
+});
 
-    saveToComputerButton.addEventListener('click', function() {
-        if (!processedImage) {
-            alert('Сначала обработайте изображение.');
-            return;
+document.getElementById('saveToComputer').addEventListener('click', function() {
+    const processedImageContainer = document.getElementById('processedImageContainer');
+    const img = processedImageContainer.querySelector('img');
+
+    if (!img) {
+        alert('Сначала обработайте изображение.');
+        return;
+    }
+
+    const a = document.createElement('a');
+    a.href = img.src;
+    a.download = 'processed_image.png';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+});
+
+document.getElementById('saveToPortfolio').addEventListener('click', function() {
+    const processedImageContainer = document.getElementById('processedImageContainer');
+    const img = processedImageContainer.querySelector('img');
+
+    if (!img) {
+        alert('Сначала обработайте изображение.');
+        return;
+    }
+
+    const newName = document.getElementById('newName').value;
+    if (!newName) {
+        alert('Пожалуйста, введите название нового изображения.');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('processed_filename', img.src.split('/').pop());
+    formData.append('new_name', newName);
+
+    fetch('/save_to_portfolio', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+        } else {
+            alert(data.message);
         }
-
-        const link = document.createElement('a');
-        link.href = processedImage;
-        link.download = document.getElementById('newName').value || 'processed_image.png';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+    })
+    .catch(error => {
+        alert('Ошибка: ' + error.message);
     });
+});
 
-    saveToPortfolioButton.addEventListener('click', function() {
-        if (!processedImage) {
-            alert('Сначала обработайте изображение.');
-            return;
+document.getElementById('saveToArchives').addEventListener('click', function() {
+    const processedImageContainer = document.getElementById('processedImageContainer');
+    const img = processedImageContainer.querySelector('img');
+
+    if (!img) {
+        alert('Сначала обработайте изображение.');
+        return;
+    }
+
+    const newName = document.getElementById('newName').value;
+    if (!newName) {
+        alert('Пожалуйста, введите название нового изображения.');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('processed_filename', img.src.split('/').pop());
+    formData.append('new_name', newName);
+
+    fetch('/save_to_archives', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+        } else {
+            alert(data.message);
         }
-
-        // Здесь должна быть логика для сохранения изображения в портфолио
-        alert('Изображение сохранено в портфолио.');
-    });
-
-    saveToArchivesButton.addEventListener('click', function() {
-        if (!processedImage) {
-            alert('Сначала обработайте изображение.');
-            return;
-        }
-
-        // Здесь должна быть логика для сохранения изображения в архивы
-        alert('Изображение сохранено в архивы.');
+    })
+    .catch(error => {
+        alert('Ошибка: ' + error.message);
     });
 });
