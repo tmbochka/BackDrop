@@ -1,4 +1,3 @@
-import os
 from flask import Flask, render_template, request, redirect, url_for, flash, session, send_from_directory, jsonify, send_file
 from flask_login import LoginManager, login_user, login_required, current_user, logout_user
 from app_and_db import app, db
@@ -10,9 +9,15 @@ import shutil
 from werkzeug.utils import secure_filename
 from rembg import remove
 from PIL import Image as PILImage
+import subprocess
+import os
+import torch
+import torchvision.transforms as transforms
+import cv2
+import numpy as np
+import pandas as pd
+import torch.nn.functional as F
 
-if not os.path.exists('uploads'):
-    os.makedirs('uploads')
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -20,6 +25,9 @@ login_manager.init_app(app)
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+if not os.path.exists('uploads'):
+    os.makedirs('uploads')
 
 @app.route('/')
 def index():
@@ -107,7 +115,8 @@ def background():
 @app.route('/profile')
 @login_required
 def profile():
-    return render_template('profile.html')
+    archives = Archive.query.filter_by(user_id=current_user.id).all()
+    return render_template('profile.html', archives=archives)
 
 @app.route('/instruction')
 def instruction():
@@ -138,7 +147,7 @@ def logout():
 @app.route('/download/<filename>')
 @login_required
 def download(filename):
-    return send_from_directory('uploads', filename)
+    return send_from_directory('uploads', filename, as_attachment=True)
 
 @app.route('/finish', methods=['POST'])
 @login_required
@@ -182,6 +191,11 @@ def upload_and_archive():
 
     shutil.rmtree(temp_dir)
 
+    if save_option in ['profile', 'all']:
+        new_archive = Archive(filename=f'{archive_name}.zip', user_id=current_user.id)
+        db.session.add(new_archive)
+        db.session.commit()
+
     if save_option in ['device', 'all']:
         return send_file(archive_path, as_attachment=True, download_name=f'{archive_name}.zip')
 
@@ -203,38 +217,14 @@ def upload():
         return jsonify({'success': False, 'message': 'Файл не выбран'}), 400
     return render_template('upload.html')
 
-@app.route('/process_image', methods=['POST'])
+
+@app.route('/process_image_tracer', methods=['POST'])
 @login_required
-def process_image():
-    filename = request.form.get('filename')
-    model = request.form.get('model')
+def process_image_tracer():
+    pass
 
-    if not filename:
-        return jsonify({'success': False, 'message': 'Имя файла не указано'}), 400
-
-    file_path = os.path.join('uploads', filename)
-    if not os.path.exists(file_path):
-        return jsonify({'success': False, 'message': 'Файл не найден'}), 404
-
-    image = PILImage.open(file_path)
-
-    if model == 'rembg':
-        processed_image = remove(image)
-    elif model == 'RMBG-2.0':
-        processed_image = remove(image)
-    else:
-        return jsonify({'success': False, 'message': 'Неизвестная модель'}), 400
-
-    processed_filename = f'processed_{filename}'
-    processed_file_path = os.path.join('uploads', processed_filename)
-    processed_image.save(processed_file_path)
-
-    image_record = Image.query.filter_by(filename=filename, user_id=current_user.id).first()
-    if image_record:
-        image_record.processed_filename = processed_filename
-        db.session.commit()
-
-    return jsonify({'success': True, 'message': 'Изображение успешно обработано', 'processed_filename': processed_filename})
+def post_processing(original_image, output_image, height, width, background='transparent', threshold=200):
+    pass
 
 @app.route('/save_to_account', methods=['POST'])
 @login_required
@@ -248,6 +238,18 @@ def save_to_account():
         flash('Изображение сохранено в аккаунт')
         return jsonify({'success': True, 'message': 'Изображение сохранено в аккаунт'})
     return jsonify({'success': False, 'message': 'Изображение не найдено'}), 404
+
+@app.route('/delete_archive/<filename>', methods=['POST'])
+@login_required
+def delete_archive(filename):
+    archive = Archive.query.filter_by(filename=filename, user_id=current_user.id).first()
+    if archive:
+        db.session.delete(archive)
+        db.session.commit()
+        os.remove(os.path.join('uploads', filename))
+        return jsonify({'success': True, 'message': 'Архив успешно удален'})
+    else:
+        return jsonify({'success': False, 'message': 'Архив не найден'}), 404
 
 if __name__ == '__main__':
     with app.app_context():
