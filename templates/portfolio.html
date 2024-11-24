@@ -1,0 +1,104 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+    <meta charset="utf-8">
+    <title>BackDrop - Портфолио</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/portfolio.js') }}" defer></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap" rel="stylesheet">
+</head>
+
+<body class="is-loading" data-barba="wrapper">
+
+    <div class="loader">
+        <div class="loader__mask">
+            <div class="inner">
+                <div class="progress"></div>
+            </div>
+        </div>
+    </div>
+    <div class="loader__content">
+        <div class="inner">
+            <div class="loader__title">
+                <div class="loader__title--mask"><span>Добро</span></div>
+                <div class="loader__title--mask"><span>Пожаловать!</span></div>
+            </div>
+            <div class="loader__image">
+                <div class="loader__image--mask">
+                    <img src="{{ url_for('static', filename='img/aest.jpg') }}" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="logo">
+        <span class="logo__text">BackDrop</span>
+    </div>
+    <nav class="main-nav">
+        <ul>
+            <li><a href="/account">Главная</a></li>
+            <li><a href="/portfolio">Портфолио</a></li>
+            <li><a href="/archiver">Архиватор</a></li>
+            <li><a href="/music">Музыка</a></li>
+            <li><a href="/background">Фон</a></li>
+            <li><a href="/instruction">Инструкция</a></li>
+            <li><a href="#0">Язык</a></li>
+            <li><a href="/profile">Выход</a></li>
+            <li><a href="#contact-us" id="contact-link">Связаться с нами</a></li>
+        </ul>
+    </nav>
+
+    <div id="viewport">
+        <main id="main" data-barba="container">
+            <header data-color="#ACB7AE">
+                <h1>
+                    <span>Портфолио</span>
+                </h1>
+                <div class="portfolio-tabs">
+                    <button class="tab-button active" data-tab="works">Работы</button>
+                    <button class="tab-button" data-tab="archives">Архивы</button>
+                </div>
+                <a href="{{ url_for('upload') }}" class="btn upload-btn">Пополнить свое портфолио</a>
+            </header>
+            <section class="portfolio with-padding">
+                <div id="works" class="tab-content active">
+                    <div class="portfolio__gallery-container">
+                        <div class="portfolio__gallery">
+                            {% for image in images %}
+                                <img src="{{ url_for('static', filename='uploads/' + image.processed_filename) }}" alt="Работа">
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div id="archives" class="tab-content">
+                    <div class="archives__content">
+                        <p>Здесь находится контент для раздела "Архивы".</p>
+                        <p>Вы можете добавить сюда любой контент, который вам нужен.</p>
+                        {% for archive in archives %}
+                            <a href="{{ url_for('download', filename=archive.filename) }}">{{ archive.filename }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+        </main>
+        <aside class="fill-background"></aside>
+    </div>
+
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>    
+    <script src="https://unpkg.com/@barba/core"></script>
+    <script src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.4.0/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.4.0/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/smooth-scrollbar@latest/dist/smooth-scrollbar.js"></script>
+</body>
+
+</html>

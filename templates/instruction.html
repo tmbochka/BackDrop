@@ -1,16 +1,16 @@
 <!doctype html>
-<html class="no-js" lang="ru">
+<html class="no-js" lang="">
 
 <head>
     <meta charset="utf-8">
-    <title>Инструкция - BackDrop</title>
+    <title>BackDrop - Инструкция</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="stylesheet" href="css/normalize.css">
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/styles.css">
-    <script src="js/main.js" defer></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
 
     <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap" rel="stylesheet">
 </head>
@@ -27,12 +27,12 @@
     <div class="loader__content">
         <div class="inner">
             <div class="loader__title">
-                <div class="loader__title--mask"><span>Добро </span></div>
+                <div class="loader__title--mask"><span>Добро</span></div>
                 <div class="loader__title--mask"><span>Пожаловать!</span></div>
             </div>
             <div class="loader__image">
                 <div class="loader__image--mask">
-                    <img src="./img/aest.jpg" />
+                    <img src="{{ url_for('static', filename='img/aest.jpg') }}" />
                 </div>
             </div>
         </div>
@@ -43,35 +43,80 @@
     </div>
     <nav class="main-nav">
         <ul>
-            <li><a href="index.html" class="lang-link" data-lang="ru">Главная</a></li>
-            <li><a href="portfolio.html" class="lang-link" data-lang="ru">Портфолио</a></li>
-            <li><a href="archiver.html" class="lang-link" data-lang="ru">Архиватор</a></li>
-            <li><a href="profil.html" class="lang-link" data-lang="ru">Профиль</a></li>
-            <li><a href="music.html" class="lang-link" data-lang="ru">Музыка</a></li>
-            <li><a href="background.html" class="lang-link" data-lang="ru">Фон</a></li>
-            <li><a href="#0" id="languageToggle" class="lang-link" data-lang="ru">Язык</a></li>
-            <li><a href="instruction.html" class="lang-link" data-lang="ru">Инструкция</a></li>
-            <li><a href="#0" class="lang-link" data-lang="ru">Связаться с нами</a></li>
+            <li><a href="/account">Главная</a></li>
+            <li><a href="/portfolio">Портфолио</a></li>
+            <li><a href="/archiver">Архиватор</a></li>
+            <li><a href="/music">Музыка</a></li>
+            <li><a href="/background">Фон</a></li>
+            <li><a href="/instruction">Инструкция</a></li>
+            <li><a href="#0">Язык</a></li>
+            <li><a href="/profile">Выход</a></li>
+            <li><a href="#contact-us" id="contact-link">Связаться с нами</a></li>
         </ul>
     </nav>
 
+
     <div id="viewport">
-
         <main id="main" data-barba="container">
-
-            <section class="instruction with-padding">
-                <h1 class="chapter">
+            <header data-color="#ACB7AE">
+                <h1>
                     <span>Инструкция</span>
                 </h1>
+            </header>
+            <section class="instruction with-padding">
+                <h2 class="chapter">
+                    <span>001 -</span> Как пользоваться сервисом
+                </h2>
                 <div class="instruction__content">
-                    <h2>Как пользоваться BackDrop</h2>
-                    <p>Длинная жопа</p>
+                    <p>Добро пожаловать в инструкцию!</p>
+                    <ol>
+                        <li>
+                            <p>Регистрация и вход:</p>
+                            <ul>
+                                <li>Перейдите на страницу «регистрации» и заполните необходимые поля.</li>
+                                <li>Подтвердите свой email, используя код, отправленный на вашу почту.</li>
+                                <li>Войдите в личный кабинет на странице «вход»</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <p>Портфолио:</p>
+                            <ul>
+                                <li>На странице «портфолио» вы можете просмотреть созданный вами работы и архивы</li>
+                                <li>На этой же странице вы можете создать новую работу, кликнув по полю «пополнить свое портфолио»</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <p>Обработка изображений</p>
+                            <ul>
+                                <li>После нажатия на «пополнить свое портфолио» вы перемещаетесь на новую страницу, где выбираете необходимые изображения и модель</li>
+                                <li>Далее вы выбираете действие с фоном (удаление фона, замена фона на другое изображение, изменение цвета фона)</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <p>Архивация изобржений</p>
+                            <ul>
+                                <li>Перейдите на страницу архиватор», чтобы создать новый архив изображений</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <p>Музыка</p>
+                            <ul>
+                                <li>Во вкладке «музыка» вы можете выбрать подходящую под настроение мелодию</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <p>Фон:</p>
+                            <ul>
+                                <li>Во вкладке «фон» вы можете выбрать понравившийся фон</li>
+                            </ul>
+                        </li>
+                    </ol>
+                </div>
+            </section>
         </main>
-
         <aside class="fill-background"></aside>
-
     </div>
-    <!-- #viewport -->
+
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>    
     <script src="https://unpkg.com/@barba/core"></script>
@@ -79,7 +124,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.4.0/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.4.0/ScrollTrigger.min.js"></script>
     <script src="https://unpkg.com/smooth-scrollbar@latest/dist/smooth-scrollbar.js"></script>
-
 </body>
 
 </html>

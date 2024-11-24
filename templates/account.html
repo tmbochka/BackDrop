@@ -7,10 +7,11 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="stylesheet" href="./static/css/normalize.css">
-    <link rel="stylesheet" href="./static/css/main.css">
-    <link rel="stylesheet" href="./static/css/styles.css">
-    <script src="/static/js/main.js" defer></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/randomDog.js') }}" defer></script>
 
     <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap" rel="stylesheet">
 </head>
@@ -43,15 +44,15 @@
     </div>
     <nav class="main-nav">
         <ul>
+            <li><a href="/index">Главная</a></li>
             <li><a href="/portfolio">Портфолио</a></li>
             <li><a href="/archiver">Архиватор</a></li>
-            <li><a href="/account">Профиль</a></li>
             <li><a href="/music">Музыка</a></li>
             <li><a href="/background">Фон</a></li>
             <li><a href="/instruction">Инструкция</a></li>
-            <li><a href="#0" id="languageToggle">Язык</a></li>
-            <li><a href="/logout">Выход</a></li>
-            <li><a href="#0">Связаться с нами</a></li>
+            <li><a href="#0">Язык</a></li>
+            <li><a href="/profile">Выход</a></li>
+            <li><a href="#contact-us" id="contact-link">Связаться с нами</a></li>
         </ul>
     </nav>
 
@@ -62,9 +63,9 @@
 
             <header data-color="#ACB7AE">
                 <h1>
-                    <span>Добро</span>
-                    <span>Пожаловать,</span>
-                    <span>{{current_user.name}}!</span>
+                    <span>Попробуй все</span>
+                    <span>Возможности</span>
+                    <span>Фона</span>
                 </h1>
                 <div class="decor__circle"></div>
                 <div class="header__gallery">
@@ -103,7 +104,7 @@
                 </h2>
                 <div class="portfolio__categories">
                     <a href="#0" data-color="#b3a8b3" data-imagelarge="./static/img/myrrr_fon.jpg" data-imagesmall="./static/img/myr.jpg">Удаление полностью</a>
-                    <a href="#0" data-color="#bab6a8" data-imagelarge="./static/img/gol_fon.jpg" data-imagesmall="./static/img/gol.jpg">Замена на цвет</a>
+                    <a href="#0" data-color="#bab6a8" data-imagelarge="./static/img/flo-fon.jpg" data-imagesmall="./static/img/flo.jpg">Замена на цвет</a>
                     <a href="#0" data-color="#b3a8b3" data-imagelarge="./static/img/duck_fon.jpg" data-imagesmall="./static/img/duck.jpg">Замена на изображение</a>
                     <a href="#0" data-color="#a3b1ae" data-imagelarge="./static/img/vod_vod.jpg" data-imagesmall="./static/img/vod.jpg">Водяной знак</a>
                 </div>
@@ -116,29 +117,28 @@
             </section>
             <!-- /Portfolio -->
 
-            <!-- How We Work -->
+            <!-- Results -->
             <section class="how-we-work with-padding">
                 <h2 class="chapter">
                     <span>002 -</span> Технологии
                 </h2>
                 <div class="fixed-nav">
                     <ul>
-                        <li class="is-active"><a href="#stage1">Семантическая сегментация</a></li>
+                        <li class="is-active"><a href="#stage1">Сегментация с использованием масок</a></li>
                         <li><a href="#stage2">Модель</a></li>
-                        <li><a href="#stage3">Функция потерь</a></li>
-                        <li><a href="#stage4">Итог</a></li>
+                        <li><a href="#stage3">Итог</a></li>
                     </ul>
                 </div>
                 <div id="stage1" class="stage with-parallax" data-color="#8c8480">
                     <div class="stage__image">
-                        <img src="./static/img/dogs.jpg" />
+                        <img src="./static/img/man.jpg" />
                     </div>
                     <div class="stage__heading">
                         <p>01</p>
-                        <h3>Семантическая сегментация</h3>
+                        <h3>Сегментация</h3>
                     </div>
                     <div class="stage__text">
-                        <p>По факту, отделение фона от изображение это разбиение картинки на два класса - фон и оставшаяся часть</p>
+                        <p>МОдель получает изображения масок: отдельно фон, отдельно объект</p>
                     </div>
                 </div>
                 <div id="stage2" class="stage with-parallax" data-color="#505156">
@@ -150,54 +150,42 @@
                         <h3>Модель</h3>
                     </div>
                     <div class="stage__text">
-                        <p>Была обучена новая модель бла бла бла</p>
+                        <p>EfficientNet + OurModel</p>
                     </div>
                 </div>
-                <div id="stage3" class="stage with-parallax" data-color="#717872">
+                <div id="stage3" class="stage with-parallax" data-color="#ccb28b">
                     <div class="stage__image">
-                        <img src="./static/img/loss.jpg" />
+                        <img src="./static/img/hands.jpg" />
                     </div>
                     <div class="stage__heading">
                         <p>03</p>
-                        <h3>Функция потерь</h3>
-                    </div>
-                    <div class="stage__text">
-                        <p>бла блаб бла</p>
-                    </div>
-                </div>
-                <div id="stage4" class="stage with-parallax" data-color="#ccb28b">
-                    <div class="stage__image">
-                        <img src="./static/img/igogo.jpg" />
-                    </div>
-                    <div class="stage__heading">
-                        <p>04</p>
                         <h3>Итог</h3>
                     </div>
                     <div class="stage__text">
-                        <p>Что-то вышло</p>
+                        <p>Бесплатный продукт для вашего пользования!</p>
                     </div>
                 </div>
             </section>
-            <!-- /How We Work -->
+            <!-- /Results -->
 
-            <!-- About Us -->
+            <!-- Contact Us -->
             <section class="about-us with-padding-bottom with-parallax">
                 <h2 class="chapter">
                     <span>003 -</span> Связаться с нами
                 </h2>
                 <div class="about-us__content">
                     <div class="about-us__image">
-                        <img src="./static/img/photo.jpg" />
+                        <img src="./static/img/photo.jpg" alt="Random Dog Image" />
                     </div>
                     <div class="about-us__text">
-                        <h3>Обещаем ответить когда-нибудь</h3>
+                        <h3>Ждем ваших вопросов!</h3>
                         <p>Напишите нам:</p>
-                        <p>Почта: julialatypova52@gmail.com</p>
                         <p>Телеграм: @tmbochka</p>
+                        <p>Почта: julialatypova52@gmail.com</p>
                     </div>
                 </div>
             </section>
-            <!-- /About Us -->
+            <!-- /Contact Us -->
 
         </main>
         <!-- #main-container -->
@@ -214,6 +202,20 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.4.0/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.4.0/ScrollTrigger.min.js"></script>
     <script src="https://unpkg.com/smooth-scrollbar@latest/dist/smooth-scrollbar.js"></script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const contactLink = document.getElementById('contact-link');
+        const contactSection = document.getElementById('contact-us');
+
+        if (contactLink && contactSection) {
+            contactLink.addEventListener('click', function(event) {
+                event.preventDefault();
+                contactSection.scrollIntoView({ behavior: 'smooth' });
+            });
+        }
+    });
+    </script>
 
 </body>
 

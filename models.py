@@ -7,6 +7,8 @@ class User(db.Model, UserMixin):
     name = db.Column(db.String(300), nullable=False)
     email = db.Column(db.String(300), nullable=False, unique=True)
     password_hash = db.Column(db.String(300), nullable=False)
+    images = db.relationship('Image', backref='user', lazy=True)
+    archives = db.relationship('Archive', backref='user', lazy=True)
 
     def __init__(self, name, email, password_hash):
         self.name = name
@@ -18,6 +20,26 @@ class User(db.Model, UserMixin):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+class Image(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    filename = db.Column(db.String(300), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    processed_filename = db.Column(db.String(300), nullable=True)
+    background_option = db.Column(db.String(50), nullable=True)
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+    def __repr__(self):
+        return '<Image {}>'.format(self.filename)
+
+class Archive(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    filename = db.Column(db.String(300), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+    def __repr__(self):
+        return '<Archive {}>'.format(self.filename)
 
 def create_user(name, email, password):
     new_user = User(name=name, email=email, password_hash=generate_password_hash(password))

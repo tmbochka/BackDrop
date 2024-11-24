@@ -20,30 +20,6 @@ const loaderInner = select('.loader .inner');
 const progressBar = select('.loader .progress');
 const loaderMask = select('.loader__mask');
 
-
-// const wrapper = document.querySelector('.wrapper');
-// const loginLink = document.querySelector('.login-link');
-// const registerLink = document.querySelector('.register-link');
-// const btnPopup = document.querySelector('.btnLogin-popup');
-// const iconClose = document.querySelector('.icon-close');
-
-// registerLink.addEventListener('click', ()=> {
-//     wrapper.classList.add('active');
-// });
-
-// loginLink.addEventListener('click', ()=> {
-//     wrapper.classList.remove('active');
-// });
-
-// btnPopup.addEventListener('click', ()=> {
-//     wrapper.classList.add('active-popup');
-// });
-
-// iconClose.addEventListener('click', ()=> {
-//     wrapper.classList.remove('active-popup');
-// });
-
-
 // images loaded
 function init() {
     // show loader on page load
@@ -89,7 +65,6 @@ function init() {
     });
 
 }
-
 
 init();
 
@@ -240,32 +215,100 @@ function initAudioControls() {
         item.addEventListener('click', () => {
             const audioId = item.dataset.audio;
             const audio = document.getElementById(audioId);
+            const backgroundImage = item.dataset.background;
 
             if (currentAudio && currentAudio !== audio) {
                 currentAudio.pause();
+                currentAudio.parentElement.classList.remove('playing');
             }
 
             if (audio.paused) {
                 audio.play();
                 currentAudio = audio;
+                item.classList.add('playing');
+                document.body.style.backgroundImage = `url(${backgroundImage})`;
             } else {
                 audio.pause();
                 currentAudio = null;
+                item.classList.remove('playing');
+                document.body.style.backgroundImage = '';
             }
         });
     });
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+    const musicItems = document.querySelectorAll('.music-item');
+
+    musicItems.forEach(item => {
+        const backgroundUrl = item.getAttribute('data-background');
+        item.style.backgroundImage = `url(${backgroundUrl})`;
+    });
+
+    initContent();
+});
+
+
+
 function initBackgroundChange() {
     const backgroundItems = document.querySelectorAll('.background-item');
+    let currentBackground = null;
 
     backgroundItems.forEach(item => {
-        item.addEventListener('click', () => {
-            const backgroundColor = item.getAttribute('data-color');
-            document.body.style.backgroundColor = backgroundColor;
+        const backgroundUrl = item.dataset.background;
+        const img = new Image();
+        img.src = backgroundUrl;
+
+        img.onload = () => {
+            item.style.backgroundImage = `url(${backgroundUrl})`;
+        };
+
+        item.addEventListener('mouseenter', () => {
+            if (currentBackground !== backgroundUrl) {
+                document.body.style.backgroundImage = `url(${backgroundUrl})`;
+                currentBackground = backgroundUrl;
+            }
+        });
+
+        item.addEventListener('mouseleave', () => {
+            if (currentBackground) {
+                document.body.style.backgroundImage = '';
+                currentBackground = null;
+            }
         });
     });
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    const backgroundItems = document.querySelectorAll('.background-item');
+    let currentBackground = null;
+
+    backgroundItems.forEach(item => {
+        const backgroundUrl = item.dataset.background;
+        const img = new Image();
+        img.src = backgroundUrl;
+
+        img.onload = () => {
+            item.style.backgroundImage = `url(${backgroundUrl})`;
+        };
+
+        item.addEventListener('mouseenter', () => {
+            console.log('Mouse enter:', backgroundUrl);
+            if (currentBackground !== backgroundUrl) {
+                document.body.style.setProperty('--background-image', `url(${backgroundUrl})`);
+                currentBackground = backgroundUrl;
+            }
+        });
+
+        item.addEventListener('mouseleave', () => {
+            console.log('Mouse leave:', backgroundUrl);
+            if (currentBackground) {
+                document.body.style.removeProperty('--background-image');
+                currentBackground = null;
+            }
+        });
+    });
+});
 
 function initContent() {
     select('body').classList.remove('is-loading');
@@ -278,7 +321,7 @@ function initContent() {
     initPinSteps();
     initScrollTo();
     initAudioControls();
-    initBackgroundChange();
+    initBackgroundChange(); // Добавляем инициализацию изменения фона
 }
 
 const updateBodyColor = (color) => {
@@ -311,6 +354,8 @@ function initSmoothScrollbar() {
     bodyScrollBar.addListener(ScrollTrigger.update);
 
 }
+
+
 
 // Navigation Away - with updated trigger
 function initNavigation() {
@@ -580,7 +625,7 @@ function initPinSteps() {
     ScrollTrigger.create({
         trigger: '.fixed-nav',
         start: 'top center',
-        endTrigger: '#stage4',
+        endTrigger: '#stage3',
         end: 'center center',
         pin: true,
         pinReparent: true
@@ -612,20 +657,24 @@ function initPinSteps() {
 }
 
 function initScrollTo() {
-
     // find all links and animate to the right position
     gsap.utils.toArray('.fixed-nav a').forEach(link => {
-
         const target = link.getAttribute('href');
 
         link.addEventListener('click', (e) => {
             e.preventDefault();
-            console.log(select(target));
             bodyScrollBar.scrollIntoView(select(target), { damping: 0.07, offsetTop: 100 });
         });
-
     });
 
+    // Добавляем обработчик для ссылки "Связаться с нами"
+    const contactLink = document.querySelector('a[href="#0"]');
+    if (contactLink) {
+        contactLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            bodyScrollBar.scrollIntoView(document.getElementById('contact-us'), { damping: 0.07, offsetTop: 100 });
+        });
+    }
 }
 
 function initBackgroundChange() {
@@ -633,9 +682,8 @@ function initBackgroundChange() {
 
     backgroundItems.forEach(item => {
         item.addEventListener('click', () => {
-            const backgroundImage = item.style.backgroundImage;
-            document.body.style.backgroundImage = backgroundImage;
+            const backgroundColor = item.getAttribute('data-color');
+            document.body.style.backgroundColor = backgroundColor;
         });
     });
 }
-
