@@ -63,42 +63,42 @@
                     <span>Загрузка фотографий</span>
                 </h1>
             </header>
-            <form id="uploadForm" enctype="multipart/form-data">
-                <div>
-                    <label for="file">Выбрать фотографию или архив:</label>
-                    <input type="file" id="file" name="file" accept="image/*,application/zip">
-                    <a href="/archiver">Еще нет архива?</a>
-                </div>
-                <div>
-                    <label for="model">Выберите модель:</label>
-                    <select id="model" name="model">
-                        <option value="rembg">rembg</option>
-                        <option value="RMBG-2.0">RMBG-2.0</option>
-                        <option value="none">Третьей еще нет</option>
-                    </select>
-                    <button type="button" id="applyModel">Применить модель</button>
-                </div>
-                <div id="processedImageContainer">
-                    <!-- Здесь будет отображаться обработанное изображение -->
-                </div>
-                <div>
-                    <label for="backgroundOption">Выберите фон:</label>
-                    <select id="backgroundOption" name="backgroundOption">
-                        <option value="transparent">Оставить прозрачный фон</option>
-                        <option value="image">Заменить на изображение</option>
-                        <option value="color">Заменить на цвет</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="newName">Название нового изображения:</label>
-                    <input type="text" id="newName" name="newName">
-                </div>
-                <div>
-                    <button type="button" id="saveToComputer">Сохранить на компьютер</button>
-                    <button type="button" id="saveToPortfolio">Сохранить в портфолио</button>
-                    <button type="button" id="saveToArchives">Сохранить в архивы</button>
-                </div>
-            </form>
+            <div class="upload__content">
+                <form id="uploadForm" enctype="multipart/form-data" class="upload__form">
+                    <div>
+                        <label for="file">Выбрать фотографию или архив:</label>
+                        <input type="file" id="file" name="file" accept="image/*,application/zip">
+                        <a href="/archiver">Еще нет архива?</a>
+                    </div>
+                    <div>
+                        <label for="newName">Название нового изображения:</label>
+                        <input type="text" id="newName" name="newName">
+                    </div>
+                    <div>
+                        <label for="model">Выберите модель:</label>
+                        <select id="model" name="model">
+                            <option value="tracer-efficient">TRACER Efficient</option>
+                        </select>
+                        <button type="button" id="applyModel">Применить модель</button>
+                    </div>
+                    <div id="processedImageContainer">
+                        <!-- Здесь будет отображаться обработанное изображение -->
+                    </div>
+                    <div>
+                        <label for="backgroundOption">Выберите фон:</label>
+                        <select id="backgroundOption" name="backgroundOption">
+                            <option value="transparent">Оставить прозрачный фон</option>
+                            <option value="image">Заменить на изображение</option>
+                            <option value="color">Заменить на цвет</option>
+                        </select>                        
+                    </div>
+                    <div>
+                        <button type="button" id="saveToComputer">Сохранить на компьютер</button>
+                        <button type="button" id="saveToPortfolio">Сохранить в портфолио</button>
+                        <button type="button" id="saveToArchives">Сохранить в архивы</button>
+                    </div>
+                </form>
+            </div>
         </main>
         <aside class="fill-background"></aside>
     </div>
