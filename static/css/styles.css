@@ -35,8 +35,6 @@ body {
     transition: background-image 0.5s ease;
 }
 
-
-
 /* =Скрываем весь контент во время загрузки */
 .is-loading #main,
 .is-loading .logo,
@@ -45,7 +43,6 @@ body {
     display: none;
 }
 /* Скрываем весь контент во время загрузки */
-
 
 .is-loading {
     background-color: var(--bcg-loaderblue);
@@ -147,7 +144,6 @@ body {
 }   
 /* Меню навигации */
 
-
 .data-color {
     color: #ACB7AE;
 }
@@ -188,7 +184,6 @@ header h1 span {
     font-weight: 300;
     pointer-events: none;
 }
-
 
 .decor__circle {
     border: 1px white solid;
@@ -382,7 +377,6 @@ header h1 span {
     position: absolute;
 }
 
-
 /* =Main */
 main {
     z-index: 1;
@@ -473,7 +467,6 @@ section {
     background-size: cover;
 }
 /* Portfolio */
-
 
 /* =Технологии */
 .how-we-work .chapter {
@@ -629,7 +622,6 @@ section {
     margin-bottom: 1vw;
 }
 /* About us */
-
 
 /* =Music */
 .music-list {
@@ -796,7 +788,6 @@ section {
     transition: background-color 0.3s linear;
 }
 
-
 /* =Инструкция */
 .instruction {
     color: var(--text-dark-color);
@@ -842,9 +833,91 @@ section {
 /* Инструкция */
 
 /* =Вот это уже портфолио с работами */
-header {
+.portfolio__content {
+    margin: 0 var(--h-gutter);
+    padding-bottom: 40px; /* Добавляем отступ снизу */
+}
+
+.portfolio__content h2 {
+    font-family: var(--font-headings);
+    font-size: 2.5vw;
+    line-height: 2;
+    font-weight: normal;
+    letter-spacing: 0.1vw;
+    margin-bottom: 1vw;
+}
+
+.portfolio__gallery,
+.archives__grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.portfolio__item,
+.archive__item {
+    position: relative;
+    width: 350px; /* Установите желаемый размер */
+    height: 250px; /* Установите желаемый размер */
+    background-size: cover;
+    background-position: center;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.portfolio__info,
+.archive__info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 10px;
     text-align: center;
-    margin-bottom: 40px; /* Добавляем отступ между заголовком и кнопками табов */
+}
+
+.portfolio__info h3,
+.archive__info h3 {
+    margin: 0;
+    font-size: 14px;
+}
+
+.portfolio__info .btn,
+.archive__info .btn {
+    margin-top: 10px;
+    padding: 5px 10px;
+    background-color: #566C76;
+    color: white;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 12px;
+    text-decoration: none;
+}
+
+.portfolio__info .btn:hover,
+.archive__info .btn:hover {
+    background-color: #ACB7AE;
+}
+
+.portfolio__info .delete-btn,
+.archive__info .delete-btn {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 12px;
+    margin-left: 5px;
+}
+
+.portfolio__info .delete-btn:hover,
+.archive__info .delete-btn:hover {
+    background-color: #ff1a1a;
 }
 
 .portfolio-tabs {
@@ -853,47 +926,6 @@ header {
     margin-top: 30px;
     margin-bottom: 20px;
     gap: 20px; /* Добавляем отступ между кнопками табов */
-}
-
-.upload-btn {
-    display: block;
-    margin: 0 auto;
-    text-align: center;
-}
-
-.portfolio__gallery {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-    margin-bottom: 40px;
-}
-
-.portfolio__gallery img {
-    max-width: 200px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.btn {
-    display: inline-block;
-    padding: 10px 30px;
-    border: 2px solid #566C76; /* цвет каемки после наведения */
-    border-radius: 20px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    text-decoration: none;
-    color: #000;
-    font-size: 16px;
-    text-align: center;
-}
-
-.btn:hover {
-    background-color: transparent; /* прозрачный фон после наведения */
-    color: #000; /* цвет текста после наведения */
-    cursor: pointer;
-    border: 2px solid #fff; /* цвет каемки после наведения */
-    transition: border-color 0.3s ease, color 0.3s ease; /* Плавный переход для контура и цвета текста */
 }
 
 .tab-button {
@@ -921,36 +953,68 @@ header {
     border-color: white; /* Белый контур при наведении */
     color: white; /* Белый текст при наведении */
 }
+
+.btn {
+    display: inline-block;
+    padding: 10px 30px;
+    border: 2px solid #566C76; /* цвет каемки после наведения */
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    text-decoration: none;
+    color: #000;
+    font-size: 16px;
+    text-align: center;
+}
+
+.btn:hover {
+    background-color: transparent; /* прозрачный фон после наведения */
+    color: #000; /* цвет текста после наведения */
+    cursor: pointer;
+    border: 2px solid #fff; /* цвет каемки после наведения */
+    transition: border-color 0.3s ease, color 0.3s ease; /* Плавный переход для контура и цвета текста */
+}
 /* Вот это уже портфолио с работами */
 
-
 /* =Страничка с модель */
-/* Добавьте эти стили в ваш файл styles.css */
-
-#uploadForm {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+.upload__content {
+    margin: 0 var(--h-gutter);
     padding: 20px;
     background-color: var(--bcg-lightgreen);
     border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-#uploadForm label {
+.upload__content h2 {
+    font-family: var(--font-headings);
+    font-size: 2.5vw;
+    line-height: 2;
+    font-weight: normal;
+    letter-spacing: 0.1vw;
+    margin-bottom: 1vw;
+}
+
+.upload__form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.upload__form label {
     font-size: 18px;
     font-weight: bold;
 }
 
-#uploadForm input[type="file"],
-#uploadForm select,
-#uploadForm input[type="text"] {
+.upload__form input[type="file"],
+.upload__form select,
+.upload__form input[type="text"] {
     padding: 10px;
     font-size: 16px;
     border-radius: 5px;
     border: 1px solid var(--bcg-lightblue);
 }
 
-#uploadForm button {
+.upload__form button {
     padding: 10px 20px;
     background-color: var(--bcg-green);
     color: var(--text-color);
@@ -961,8 +1025,19 @@ header {
     transition: background-color 0.3s ease;
 }
 
-#uploadForm button:hover {
+.upload__form button:hover {
     background-color: var(--bcg-lightblue);
+}
+
+.upload__form a {
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 16px;
+    transition: color 0.3s ease;
+}
+
+.upload__form a:hover {
+    color: var(--bcg-lightblue);
 }
 
 #processedImageContainer img {
@@ -975,6 +1050,10 @@ header {
 .archiver__content {
     display: flex;
     justify-content: space-between;
+    padding: 20px;
+    background-color: var(--bcg-lightgreen);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .left-side {
@@ -1095,8 +1174,87 @@ button[type="submit"]:hover {
 }
 /* Архиватор */
 
+/* =Профиль */
+.profile__content {
+    margin: 0 var(--h-gutter);
+    padding-bottom: 40px; /* Добавляем отступ снизу */
+}
 
+.profile__content h2 {
+    font-family: var(--font-headings);
+    font-size: 2.5vw;
+    line-height: 2;
+    font-weight: normal;
+    letter-spacing: 0.1vw;
+    margin-bottom: 1vw;
+}
 
+.archives__grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.archive__item {
+    position: relative;
+    width: 350px; /* Установите желаемый размер */
+    height: 250px; /* Установите желаемый размер */
+    background-image: url("{{ url_for('static', filename='img/onyx.jpg') }}");
+    background-size: cover;
+    background-position: center;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.archive__info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 10px;
+    text-align: center;
+}
+
+.archive__info h3 {
+    margin: 0;
+    font-size: 14px;
+}
+
+.archive__info .btn {
+    margin-top: 10px;
+    padding: 5px 10px;
+    background-color: #566C76;
+    color: white;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 12px;
+    text-decoration: none;
+}
+
+.archive__info .btn:hover {
+    background-color: #ACB7AE;
+}
+
+.archive__info .delete-btn {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 12px;
+    margin-left: 5px;
+}
+
+.archive__info .delete-btn:hover {
+    background-color: #ff1a1a;
+}
+/* Профиль */
 
 @media only screen and (min-width: 480px) {}
 
