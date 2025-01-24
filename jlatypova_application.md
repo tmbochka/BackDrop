@@ -1,5 +1,4 @@
 # **Латыпова Юлия - "BackDrop"**
-###  **Группа: 10 - МИ - 3**
 ### **Электронная почта: julialatypova52@gmail.com**
 ### **VK: https://vk.com/yu_ltp**
 
