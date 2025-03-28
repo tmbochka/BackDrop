@@ -7,32 +7,83 @@ import random
 import zipfile
 import shutil
 from werkzeug.utils import secure_filename
-from rembg import remove
 from PIL import Image as PILImage
 import subprocess
 import os
-import torch
-import torchvision.transforms as transforms
 import cv2
 import numpy as np
-import pandas as pd
-import torch.nn.functional as F
+import matplotlib.image as mpimg
+import logging
+import sys
+import uuid
+import torch
+from torchvision import transforms
+import requests
+
+from tracer_model import TracerModel
 
 
 login_manager = LoginManager()
 login_manager.init_app(app)
+login_manager.login_view = 'login'
 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-if not os.path.exists('uploads'):
-    os.makedirs('uploads')
+# ========================
+# Основные маршруты
+# ========================
 
 @app.route('/')
 def index():
     return render_template('index.html')
-    
+
+
+# Главная страница после входа в аккаунт
+@app.route('/account')
+@login_required
+def account():
+    return render_template('account.html')
+
+# Здесь лежат архивы и обработанные фото
+@app.route('/portfolio')
+@login_required
+def portfolio():
+    images = Image.query.filter_by(user_id=current_user.id).all()
+    archives = Archive.query.filter_by(user_id=current_user.id).all()
+    return render_template('portfolio.html', images=images, archives=archives)
+
+# Страница архиватора
+@app.route('/archiver')
+@login_required
+def archiver():
+    return render_template('archiver.html')
+
+# Страница с музыкой
+'''Раньше работало, сейчас нет, но это не столь важно и поправимо'''
+@app.route('/music')
+@login_required
+def music():
+    return render_template('music.html')
+
+# Страница с фонами
+'''Была идея, что после применения, фон будет меняться на всех страницах, но пока меняется только на странице background, но тоже не столь важно'''
+@app.route('/background')
+@login_required
+def background():
+    return render_template('background.html')
+
+# Базова инструкция
+@app.route('/instruction')
+def instruction():
+    return render_template('instruction.html')
+
+# ========================
+# Аутентификация
+# ========================
+
+# Регистрация пользователя
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -41,125 +92,142 @@ def register():
         password = request.form.get('password')
         repeat_password = request.form.get('repeat_password')
 
-        if not (name and email and password and repeat_password):
-            flash('Все поля должны быть заполнены.')
+        if not all([name, email, password, repeat_password]):
+            flash('Все поля должны быть заполнены.', 'error')
             return redirect(url_for('register'))
 
         if password != repeat_password:
-            flash('Пароли не совпадают.')
+            flash('Пароли не совпадают.', 'error')
             return redirect(url_for('register'))
 
-        user = get_user_by_email(email)
-        if user:
-            flash('Пользователь с такой почтой уже существует.')
+        if get_user_by_email(email):
+            flash('Пользователь с такой почтой уже существует.', 'error')
             return redirect(url_for('register'))
 
-        session['info'] = [name, email, password]
-        code = random.randint(1000, 9999)
-        session['code'] = code
-        send_email(email, 'Код подтверждения', f'Ваш код подтверждения: {code}')
-
-        return redirect(url_for('confirm_email'))
+        session['user_info'] = {
+            'name': name,
+            'email': email,
+            'password': password
+        }
+        session['verification_code'] = str(random.randint(1000, 9999))
+        
+        try:
+            send_email(email, 'Код подтверждения', 
+                      f'Ваш код подтверждения: {session["verification_code"]}')
+            flash('Код подтверждения отправлен на вашу почту.', 'success')
+            return redirect(url_for('confirm_email'))
+        except Exception as e:
+            flash(f'Ошибка отправки email: {str(e)}', 'error')
+            return redirect(url_for('register'))
 
     return render_template('register.html')
 
+# Приходит код на почту (возможно в спам)
 @app.route('/confirm_email', methods=['GET', 'POST'])
 def confirm_email():
+    if 'user_info' not in session:
+        flash('Сначала зарегистрируйтесь.', 'error')
+        return redirect(url_for('register'))
+
     if request.method == 'POST':
-        code_sent = session.get('code')
-        code = request.form.get('code')
-
-        if str(code_sent) != str(code):
-            flash('Неверный код.')
-            return redirect(url_for('confirm_email'))
-
-        info = session.get('info')
-        create_user(info[0], info[1], info[2])
-        flash('Регистрация успешна!')
-        return redirect(url_for('login'))
-
+        user_code = request.form.get('code')
+        if user_code == session.get('verification_code'):
+            user_info = session['user_info']
+            create_user(user_info['name'], user_info['email'], user_info['password'])
+            flash('Регистрация успешно завершена! Теперь вы можете войти.', 'success')
+            session.pop('user_info', None)
+            session.pop('verification_code', None)
+            return redirect(url_for('login'))
+        else:
+            flash('Неверный код подтверждения.', 'error')
+    
     return render_template('confirm_email.html')
 
-@app.route('/account')
-@login_required
-def account():
-    return render_template('account.html')
-
-@app.route('/portfolio')
-@login_required
-def portfolio():
-    images = Image.query.filter_by(user_id=current_user.id).all()
-    archives = Archive.query.filter_by(user_id=current_user.id).all()
-    return render_template('portfolio.html', images=images, archives=archives)
-
-@app.route('/archiver')
-@login_required
-def archiver():
-    return render_template('archiver.html')
-
-@app.route('/section')
-@login_required
-def section():
-    return render_template('section.html')
-
-@app.route('/music')
-@login_required
-def music():
-    return render_template('music.html')
-
-@app.route('/background')
-@login_required
-def background():
-    return render_template('background.html')
-
-@app.route('/profile')
-@login_required
-def profile():
-    archives = Archive.query.filter_by(user_id=current_user.id).all()
-    return render_template('profile.html', archives=archives)
-
-@app.route('/instruction')
-def instruction():
-    return render_template('instruction.html')
-
+# После подтверждения кода нужно снова ввести данные, но уже для входа
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
-
         user = get_user_by_email(email)
+        
         if user and user.check_password(password):
             login_user(user)
-            return redirect(url_for('account'))
-        else:
-            flash('Неверный email или пароль.')
-            return redirect(url_for('login'))
-
+            flash('Вы успешно вошли в систему.', 'success')
+            next_page = request.args.get('next') or url_for('account')
+            return redirect(next_page)
+        
+        flash('Неверный email или пароль.', 'error')
+    
     return render_template('login.html')
 
+# Выход из аккаунта
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
+    flash('Вы вышли из системы.', 'info')
     return redirect(url_for('index'))
 
-@app.route('/download/<filename>')
-@login_required
-def download(filename):
-    return send_from_directory('uploads', filename, as_attachment=True)
+# =====================================
+# МОМЕНТ с МОДЕЛЬЮ TRACER
+# =====================================
 
-@app.route('/finish', methods=['POST'])
-@login_required
-def finish():
-    archive_name = request.form.get('archive_name', 'processed_images.zip')
-    shutil.make_archive(os.path.join('uploads', archive_name), 'zip', 'uploads')
-    flash('Обработанные изображения сохранены в архив')
-    return redirect(url_for('portfolio'))
+# ЗАГРУЖАЕМ МОДЕЛЬ
 
-@app.route('/favicon.ico')
-def favicon():
-    return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
+# Пока закомментировала, чтобы сайт вообще открывался
+# tracer = TracerModel("archive/data.pkl")
+
+# Это просто страница с самой моделью, на которой будут обрабатываться фото
+@app.route('/upload', methods=['GET'])
+@login_required
+def upload_page():
+    return render_template('upload.html')
+
+# ВОТ ЗДЕСЬ УЖЕ ОБРАБОТКА ФОТО МОДЕЛЬЮ
+@app.route('/upload', methods=['POST'])
+@login_required
+def handle_upload():
+    try:
+        if 'file' not in request.files:
+            return jsonify({'error': 'Файл не выбран'}), 400
+        
+        file = request.files['file']
+        if file.filename == '':
+            return jsonify({'error': 'Имя файла пустое'}), 400
+
+        temp_filename = f'temp_{uuid.uuid4().hex[:8]}.jpg'
+        temp_path = os.path.join(app.config['UPLOAD_FOLDER'], temp_filename)
+        file.save(temp_path)
+
+        processed_image = tracer.process_image(temp_path)
+        
+        result_filename = f"res_{uuid.uuid4().hex[:8]}.jpg"
+        result_path = os.path.join(app.config['UPLOAD_FOLDER'], result_filename)
+        cv2.imwrite(result_path, processed_image)
+        
+        os.remove(temp_path)
+
+        return jsonify({
+            'success': True,
+            'filename': result_filename
+        })
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# В папке uploads будут лежать обработанные фото
+@app.route('/uploads/<filename>')
+@login_required
+def get_uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+
+# ========================
+# РАБОТА С АРХИВАМИ
+# ========================
+
+# Тут все нормально, все работает. Архивы сохраняются в: Профиль -> Архивы
 
 @app.route('/upload_and_archive', methods=['POST'])
 @login_required
@@ -168,88 +236,93 @@ def upload_and_archive():
         return jsonify({'success': False, 'message': 'Файлы не выбраны'}), 400
 
     files = request.files.getlist('file')
-    if not files:
+    if not files or all(f.filename == '' for f in files):
         return jsonify({'success': False, 'message': 'Файлы не выбраны'}), 400
 
-    archive_name = request.form.get('archive_name', 'archive')
-    save_option = request.form.get('save_option')
+    archive_name = request.form.get('archive_name', 'archive').strip() or 'archive'
+    save_option = request.form.get('save_option', 'device')
 
-    temp_dir = os.path.join('uploads', 'temp')
+    temp_dir = os.path.join(app.config['UPLOAD_FOLDER'], 'temp')
     os.makedirs(temp_dir, exist_ok=True)
 
-    for file in files:
-        file_path = os.path.join(temp_dir, file.filename)
-        file.save(file_path)
+    try:
+        saved_files = []
+        for file in files:
+            if file.filename:
+                filename = secure_filename(file.filename)
+                filepath = os.path.join(temp_dir, filename)
+                file.save(filepath)
+                saved_files.append(filename)
 
-    archive_path = os.path.join('uploads', f'{archive_name}.zip')
-    with zipfile.ZipFile(archive_path, 'w') as zipf:
-        for root, dirs, files in os.walk(temp_dir):
-            for file in files:
-                file_path = os.path.join(root, file)
-                arcname = os.path.relpath(file_path, temp_dir)
-                zipf.write(file_path, arcname)
+        # Тут создание архива
+        archive_path = os.path.join(app.config['UPLOAD_FOLDER'], f'{archive_name}.zip')
+        with zipfile.ZipFile(archive_path, 'w') as zipf:
+            for filename in saved_files:
+                filepath = os.path.join(temp_dir, filename)
+                zipf.write(filepath, filename)
 
-    shutil.rmtree(temp_dir)
-
-    if save_option in ['profile', 'all']:
-        new_archive = Archive(filename=f'{archive_name}.zip', user_id=current_user.id)
-        db.session.add(new_archive)
-        db.session.commit()
-
-    if save_option in ['device', 'all']:
-        return send_file(archive_path, as_attachment=True, download_name=f'{archive_name}.zip')
-
-    return jsonify({'success': True, 'message': 'Файлы успешно заархивированы'}), 200
-
-@app.route('/upload', methods=['GET', 'POST'])
-@login_required
-def upload():
-    if request.method == 'POST':
-        file = request.files['file']
-        if file:
-            filename = secure_filename(file.filename)
-            file_path = os.path.join('uploads', filename)
-            file.save(file_path)
-            new_image = Image(filename=filename, user_id=current_user.id)
-            db.session.add(new_image)
+        # Тут сохранение в БД
+        if save_option in ['profile', 'all']:
+            new_archive = Archive(
+                filename=f'{archive_name}.zip',
+                user_id=current_user.id
+            )
+            db.session.add(new_archive)
             db.session.commit()
-            return jsonify({'success': True, 'message': 'Файл успешно загружен', 'filename': filename})
-        return jsonify({'success': False, 'message': 'Файл не выбран'}), 400
-    return render_template('upload.html')
 
+        if save_option in ['device', 'all']:
+            return send_file(
+                archive_path,
+                as_attachment=True,
+                download_name=f'{archive_name}.zip',
+                mimetype='application/zip'
+            )
 
-@app.route('/process_image_tracer', methods=['POST'])
+        return jsonify({
+            'success': True,
+            'message': 'Файлы успешно заархивированы',
+            'archive_name': f'{archive_name}.zip'
+        })
+
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': f'Ошибка при создании архива: {str(e)}'
+        }), 500
+    finally:
+        if os.path.exists(temp_dir):
+            shutil.rmtree(temp_dir)
+
+# Это удаление архива из Профиль -> Архивы
+# Тоже все работает вроде
+@app.route('/delete_archive/<int:archive_id>', methods=['POST'])
 @login_required
-def process_image_tracer():
-    pass
-
-def post_processing(original_image, output_image, height, width, background='transparent', threshold=200):
-    pass
-
-@app.route('/save_to_account', methods=['POST'])
-@login_required
-def save_to_account():
-    processed_filename = request.form.get('processed_filename')
-    if not processed_filename:
-        return jsonify({'success': False, 'message': 'Имя файла не указано'}), 400
-
-    image_record = Image.query.filter_by(processed_filename=processed_filename, user_id=current_user.id).first()
-    if image_record:
-        flash('Изображение сохранено в аккаунт')
-        return jsonify({'success': True, 'message': 'Изображение сохранено в аккаунт'})
-    return jsonify({'success': False, 'message': 'Изображение не найдено'}), 404
-
-@app.route('/delete_archive/<filename>', methods=['POST'])
-@login_required
-def delete_archive(filename):
-    archive = Archive.query.filter_by(filename=filename, user_id=current_user.id).first()
-    if archive:
+def delete_archive(archive_id):
+    archive = Archive.query.filter_by(id=archive_id, user_id=current_user.id).first()
+    if not archive:
+        return jsonify({'success': False, 'message': 'Архив не найден'}), 404
+    
+    try:
+        # Удаление архива
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], archive.filename)
+        if os.path.exists(filepath):
+            os.remove(filepath)
+        
+        # Удаление из БД
         db.session.delete(archive)
         db.session.commit()
-        os.remove(os.path.join('uploads', filename))
-        return jsonify({'success': True, 'message': 'Архив успешно удален'})
-    else:
-        return jsonify({'success': False, 'message': 'Архив не найден'}), 404
+        
+        return jsonify({'success': True, 'message': 'Архив удален'})
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Ошибка удаления: {str(e)}'}), 500
+
+# Уже забыла зачем это, кажется, для иконок
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'), 
+           'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
+
 
 if __name__ == '__main__':
     with app.app_context():

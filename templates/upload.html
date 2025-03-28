@@ -7,8 +7,6 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/upload.js') }}" defer></script>
@@ -63,46 +61,66 @@
                     <span>Загрузка фотографий</span>
                 </h1>
             </header>
+            
             <div class="upload__content">
-                <form id="uploadForm" enctype="multipart/form-data" class="upload__form">
-                    <div>
+                <form id="uploadForm" method="POST" enctype="multipart/form-data" class="upload__form">
+                    <div class="form-group">
                         <label for="file">Выбрать фотографию или архив:</label>
-                        <input type="file" id="file" name="file" accept="image/*,application/zip">
-                        <a href="/archiver">Еще нет архива?</a>
+                        <input type="file" id="file" name="file" accept="image/*,application/zip" class="form-control">
+                        <a href="/archiver" class="form-link">Еще нет архива?</a>
                     </div>
-                    <div>
+                    
+                    <div class="form-group">
                         <label for="newName">Название нового изображения:</label>
-                        <input type="text" id="newName" name="newName">
+                        <input type="text" id="newName" name="newName" class="form-control" placeholder="Введите название">
                     </div>
-                    <div>
+                    
+                    <!-- Модель пока одна, ибо нужно чтобы она хотя бы заработала -->
+                    <div class="form-group">
                         <label for="model">Выберите модель:</label>
-                        <select id="model" name="model">
-                            <option value="tracer-efficient">TRACER Efficient</option>
-                        </select>
-                        <button type="button" id="applyModel">Применить модель</button>
+                        <div class="form-row">
+                            <select id="model" name="model" class="form-control">
+                                <option value="tracer-efficient">TRACER Efficient</option>
+                            </select>
+                            <button type="button" id="applyModel" class="btn-primary">Применить модель</button>
+                        </div>
                     </div>
-                    <div id="processedImageContainer">
-                        <!-- Здесь будет отображаться обработанное изображение -->
+                    
+                    <div id="processedImageContainer" class="preview-container">
+                        <div class="preview-placeholder">
+                            <ion-icon name="image-outline"></ion-icon>
+                            <p>Здесь будет предпросмотр</p>
+                        </div>
                     </div>
-                    <div>
+                    
+                    <!-- ДОЛЖЕН БЫТЬ КРАСИВЫЙ ПРОГРЕСС БАР, НО ТУТ ПОКА НИЧЕГО НЕ РАБОТАЕТ -->
+                    <div id="progressContainer" class="progress-container">
+                        <progress id="progressBar" value="0" max="100"></progress>
+                        <span id="progressText">0%</span>
+                    </div>
+                    
+                    <div class="form-group">
                         <label for="backgroundOption">Выберите фон:</label>
-                        <select id="backgroundOption" name="backgroundOption">
+                        <select id="backgroundOption" name="backgroundOption" class="form-control">
                             <option value="transparent">Оставить прозрачный фон</option>
                             <option value="image">Заменить на изображение</option>
                             <option value="color">Заменить на цвет</option>
-                        </select>                        
+                        </select>
                     </div>
-                    <div>
-                        <button type="button" id="saveToComputer">Сохранить на компьютер</button>
-                        <button type="button" id="saveToPortfolio">Сохранить в портфолио</button>
-                        <button type="button" id="saveToArchives">Сохранить в архивы</button>
+                    
+                    <div class="form-actions">
+                        <button type="button" id="saveToComputer" class="btn-secondary" disabled>Сохранить на компьютер</button>
+                        <button type="button" id="saveToPortfolio" class="btn-secondary" disabled>Сохранить в портфолио</button>
+                        <button type="button" id="saveToArchives" class="btn-secondary" disabled>Сохранить в архивы</button>
                     </div>
                 </form>
             </div>
         </main>
+        
         <aside class="fill-background"></aside>
     </div>
 
+    
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>    
     <script src="https://unpkg.com/@barba/core"></script>
@@ -111,5 +129,4 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.4.0/ScrollTrigger.min.js"></script>
     <script src="https://unpkg.com/smooth-scrollbar@latest/dist/smooth-scrollbar.js"></script>
 </body>
-
 </html>

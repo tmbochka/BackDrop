@@ -1,7 +1,7 @@
 // archiver.js
 document.getElementById('file-upload').addEventListener('change', function(event) {
     const uploadedPhotos = document.getElementById('uploaded-photos');
-    uploadedPhotos.innerHTML = ''; // Очищаем предыдущие загруженные фотографии
+    uploadedPhotos.innerHTML = '';
 
     for (let file of event.target.files) {
         const reader = new FileReader();

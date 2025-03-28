@@ -1,130 +1,89 @@
-document.getElementById('applyModel').addEventListener('click', function() {
-    const fileInput = document.getElementById('file');
-    const modelSelect = document.getElementById('model');
-    const backgroundOption = document.getElementById('backgroundOption').value;
-    const processedImageContainer = document.getElementById('processedImageContainer');
+// Я УЖЕ ЗАПУТАЛАСЬ ЧТО ЗДЕСЬ ПРОИСХОДИТ, ТАК КАК ПРОМТЫ ПИСАТЬ ЭТО ЦЕЛОЕ ИСКУССТВО, А ДИПСИК НЕ ОЧЕНЬ ЗАХОТЕЛ МНЕ ПОМОГАТЬ 
 
-    if (fileInput.files.length === 0) {
-        alert('Пожалуйста, выберите файл.');
-        return;
-    }
+document.addEventListener('DOMContentLoaded', function() {
+    // Элементы интерфейса
+    const applyBtn = document.getElementById('applyModel');
+    const progressContainer = document.getElementById('progressContainer');
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+    const saveButtons = [
+        document.getElementById('saveToComputer'),
+        document.getElementById('saveToPortfolio'),
+        document.getElementById('saveToArchives')
+    ];
 
-    const formData = new FormData();
-    formData.append('file', fileInput.files[0]);
-    formData.append('model', modelSelect.value);
-    formData.append('backgroundOption', backgroundOption);
-    formData.append('filename', fileInput.files[0].name);
+    // Блокировка кнопок сохранения при загрузке
+    saveButtons.forEach(btn => btn.disabled = true);
 
-    let url = '/process_image_tracer';
-
-    fetch(url, {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            const imgAlpha = document.createElement('img');
-            imgAlpha.src = '/uploads/' + data.result_alpha_filename;
-            const imgColor = document.createElement('img');
-            imgColor.src = '/uploads/' + data.result_color_filename;
-            processedImageContainer.innerHTML = '';
-            processedImageContainer.appendChild(imgAlpha);
-            processedImageContainer.appendChild(imgColor);
-        } else {
-            alert(data.message);
+    // Обработка нажатия "Применить модель"
+    applyBtn.addEventListener('click', async function() {
+        const fileInput = document.getElementById('file');
+        const backgroundOption = document.getElementById('backgroundOption').value;
+        
+        if (!fileInput.files[0]) {
+            alert('Пожалуйста, выберите файл!');
+            return;
         }
-    })
-    .catch(error => {
-        alert('Ошибка: ' + error.message);
-    });
-});
 
-document.getElementById('saveToComputer').addEventListener('click', function() {
-    const processedImageContainer = document.getElementById('processedImageContainer');
-    const img = processedImageContainer.querySelector('img');
+        // Показываем прогресс
+        progressContainer.style.display = 'block';
+        progressBar.value = 0;
+        progressText.textContent = '0%';
 
-    if (!img) {
-        alert('Сначала обработайте изображение.');
-        return;
-    }
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+        formData.append('backgroundOption', backgroundOption);
 
-    const a = document.createElement('a');
-    a.href = img.src;
-    a.download = 'processed_image.png';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-});
+        try {
+            const response = await fetch('/process_image', {
+                method: 'POST',
+                body: formData,
+            });
 
-document.getElementById('saveToPortfolio').addEventListener('click', function() {
-    const processedImageContainer = document.getElementById('processedImageContainer');
-    const img = processedImageContainer.querySelector('img');
+            // Обновляем прогресс
+            progressBar.value = 50;
+            progressText.textContent = '50%';
 
-    if (!img) {
-        alert('Сначала обработайте изображение.');
-        return;
-    }
+            const result = await response.json();
 
-    const newName = document.getElementById('newName').value;
-    if (!newName) {
-        alert('Пожалуйста, введите название нового изображения.');
-        return;
-    }
+            if (result.success) {
+                // Показываем результат
+                const container = document.getElementById('processedImageContainer');
+                container.innerHTML = `
+                    <img src="/uploads/${result.filename}" alt="Обработанное изображение" class="processed-image">
+                    <p class="success-message">${result.message}</p>
+                `;
 
-    const formData = new FormData();
-    formData.append('processed_filename', img.src.split('/').pop());
-    formData.append('new_name', newName);
+                // Активируем кнопки сохранения
+                saveButtons.forEach(btn => btn.disabled = false);
 
-    fetch('/save_to_portfolio', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert(data.message);
-        } else {
-            alert(data.message);
+                // Завершаем прогресс
+                progressBar.value = 100;
+                progressText.textContent = '100%';
+                setTimeout(() => {
+                    progressContainer.style.display = 'none';
+                }, 1000);
+            } else {
+                throw new Error(result.message);
+            }
+        } catch (error) {
+            progressContainer.style.display = 'none';
+            alert(`Ошибка: ${error.message}`);
         }
-    })
-    .catch(error => {
-        alert('Ошибка: ' + error.message);
     });
-});
 
-document.getElementById('saveToArchives').addEventListener('click', function() {
-    const processedImageContainer = document.getElementById('processedImageContainer');
-    const img = processedImageContainer.querySelector('img');
-
-    if (!img) {
-        alert('Сначала обработайте изображение.');
-        return;
-    }
-
-    const newName = document.getElementById('newName').value;
-    if (!newName) {
-        alert('Пожалуйста, введите название нового изображения.');
-        return;
-    }
-
-    const formData = new FormData();
-    formData.append('processed_filename', img.src.split('/').pop());
-    formData.append('new_name', newName);
-
-    fetch('/save_to_archives', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert(data.message);
-        } else {
-            alert(data.message);
+    // Обработчик для кнопки "Сохранить на компьютер"
+    document.getElementById('saveToComputer').addEventListener('click', function() {
+        const img = document.querySelector('#processedImageContainer img');
+        if (img) {
+            const link = document.createElement('a');
+            link.href = img.src;
+            link.download = img.src.split('/').pop() || 'processed_image.png';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
-    })
-    .catch(error => {
-        alert('Ошибка: ' + error.message);
     });
+
+    // ДЛЯ ДРУГИХ КНОПОК ПОКА НЕТ
 });

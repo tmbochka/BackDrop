@@ -23,14 +23,12 @@ class User(db.Model, UserMixin):
 
 class Image(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    filename = db.Column(db.String(300), nullable=False)
+    filename = db.Column(db.String(255), nullable=False)
+    processed_filename = db.Column(db.String(255))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    processed_filename = db.Column(db.String(300), nullable=True)
-    background_option = db.Column(db.String(50), nullable=True)
-    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
-
+    
     def __repr__(self):
-        return '<Image {}>'.format(self.filename)
+        return f'<Image {self.filename}>'
 
 class Archive(db.Model):
     id = db.Column(db.Integer, primary_key=True)

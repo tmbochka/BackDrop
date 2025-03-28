@@ -21,6 +21,8 @@ const loaderInner = select('.loader .inner');
 const progressBar = select('.loader .progress');
 const loaderMask = select('.loader__mask');
 
+// ЭТА ЧАСТЬ СКРЫТА, ЧЕСТНО, С НЕЙ НЕ РАБОТАЕТ, ЧТО ПЕЧАЛЬНО. нЕ ПОМНЮ УЖЕ ПОЧЕМУ ОНО ПЕРЕСТАЛО РАБОТАТЬ, НО ПЕРЕД ЗАХОДОМ НА КАЖДУЮ СТРАНИЦУ ВЫЕЗЖАЛ КВАДРАТ С НАДПИСЬЮ
+
 // function init() {
 //     gsap.set(loader, { autoAlpha: 1 });
 //     gsap.set(loaderInner, { scaleY: 0.005, transformOrigin: 'bottom' }); // место с которого начинает выезжать синий квадрат при приветствии

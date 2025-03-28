@@ -1,3 +1,5 @@
+// СУПЕР КЛАССНАЯ АПИШКА С РАНДОМНЫМИ ФОТО СОБАК НА СТРАНИЦЕ "СВЯЗАТЬСЯ С НАМИ"
+
 document.addEventListener('DOMContentLoaded', function() {
     // Функция для загрузки случайной картинки собаки
     function loadRandomDogImage() {
