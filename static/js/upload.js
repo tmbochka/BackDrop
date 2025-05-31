@@ -1,89 +1,99 @@
-// Я УЖЕ ЗАПУТАЛАСЬ ЧТО ЗДЕСЬ ПРОИСХОДИТ, ТАК КАК ПРОМТЫ ПИСАТЬ ЭТО ЦЕЛОЕ ИСКУССТВО, А ДИПСИК НЕ ОЧЕНЬ ЗАХОТЕЛ МНЕ ПОМОГАТЬ 
-
-document.addEventListener('DOMContentLoaded', function() {
-    // Элементы интерфейса
+document.addEventListener('DOMContentLoaded', function () {
+    const fileInput = document.getElementById('file');
     const applyBtn = document.getElementById('applyModel');
+    const previewContainer = document.getElementById('processedImageContainer');
     const progressContainer = document.getElementById('progressContainer');
     const progressBar = document.getElementById('progressBar');
     const progressText = document.getElementById('progressText');
-    const saveButtons = [
-        document.getElementById('saveToComputer'),
-        document.getElementById('saveToPortfolio'),
-        document.getElementById('saveToArchives')
-    ];
+    const saveComputerBtn = document.getElementById('saveToComputer');
 
-    // Блокировка кнопок сохранения при загрузке
-    saveButtons.forEach(btn => btn.disabled = true);
+    let currentResultFilename = '';
 
-    // Обработка нажатия "Применить модель"
-    applyBtn.addEventListener('click', async function() {
-        const fileInput = document.getElementById('file');
-        const backgroundOption = document.getElementById('backgroundOption').value;
-        
+    if (!applyBtn) {
+        console.error("Кнопка 'applyModel' не найдена!");
+        return;
+    }
+
+    // Предпросмотр изображения
+    fileInput.addEventListener('change', function () {
+        if (!fileInput.files[0]) return;
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            previewContainer.innerHTML = `
+                <img src="${e.target.result}" class="preview-image">
+                <p class="image-info">Загруженное изображение</p>
+            `;
+        };
+        reader.readAsDataURL(fileInput.files[0]);
+    });
+
+    // Обработка изображения
+    applyBtn.addEventListener('click', async function () {
         if (!fileInput.files[0]) {
             alert('Пожалуйста, выберите файл!');
             return;
         }
 
-        // Показываем прогресс
         progressContainer.style.display = 'block';
         progressBar.value = 0;
         progressText.textContent = '0%';
 
         const formData = new FormData();
         formData.append('file', fileInput.files[0]);
-        formData.append('backgroundOption', backgroundOption);
 
         try {
+            const interval = setInterval(() => {
+                if (progressBar.value < 90) {
+                    progressBar.value += 10;
+                    progressText.textContent = `${progressBar.value}%`;
+                }
+            }, 300);
+
             const response = await fetch('/process_image', {
                 method: 'POST',
-                body: formData,
+                body: formData
             });
 
-            // Обновляем прогресс
-            progressBar.value = 50;
-            progressText.textContent = '50%';
-
+            clearInterval(interval);
             const result = await response.json();
 
             if (result.success) {
-                // Показываем результат
-                const container = document.getElementById('processedImageContainer');
-                container.innerHTML = `
-                    <img src="/uploads/${result.filename}" alt="Обработанное изображение" class="processed-image">
-                    <p class="success-message">${result.message}</p>
-                `;
-
-                // Активируем кнопки сохранения
-                saveButtons.forEach(btn => btn.disabled = false);
-
-                // Завершаем прогресс
                 progressBar.value = 100;
                 progressText.textContent = '100%';
-                setTimeout(() => {
-                    progressContainer.style.display = 'none';
-                }, 1000);
+
+                currentResultFilename = result.filename;
+                const resultUrl = result.result_url + '?t=' + Date.now();
+
+                previewContainer.innerHTML = `
+                    <img src="${resultUrl}" class="processed-image">
+                    <p class="success-message">${result.message}</p>
+                `;
+                saveComputerBtn.disabled = false;
             } else {
-                throw new Error(result.message);
+                throw new Error(result.message || 'Ошибка обработки');
             }
         } catch (error) {
-            progressContainer.style.display = 'none';
-            alert(`Ошибка: ${error.message}`);
+            previewContainer.innerHTML += `
+                <p class="error-message">Ошибка: ${error.message}</p>
+            `;
+        } finally {
+            setTimeout(() => {
+                progressContainer.style.display = 'none';
+            }, 1000);
         }
     });
 
-    // Обработчик для кнопки "Сохранить на компьютер"
-    document.getElementById('saveToComputer').addEventListener('click', function() {
-        const img = document.querySelector('#processedImageContainer img');
-        if (img) {
-            const link = document.createElement('a');
-            link.href = img.src;
-            link.download = img.src.split('/').pop() || 'processed_image.png';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-    });
+    // Скачивание файла
+    saveComputerBtn.addEventListener('click', function () {
+        if (!currentResultFilename) return;
 
-    // ДЛЯ ДРУГИХ КНОПОК ПОКА НЕТ
+        const downloadUrl = `/static/results/${currentResultFilename}`;
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = `no_bg_${fileInput.files[0].name.replace(/\.[^/.]+$/, '')}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    });
 });

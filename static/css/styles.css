@@ -1195,6 +1195,170 @@ section {
     }
 }
 /* Страничка с модель */
+/* Стили для загрузки и предпросмотра */
+.preview-container {
+    margin: 20px 0;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.preview-placeholder, .loading-spinner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #666;
+}
+
+.preview-image, .processed-image {
+    max-width: 100%;
+    max-height: 400px;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* Прогресс-бар */
+.progress-container {
+    margin: 20px 0;
+    width: 100%;
+    display: none;
+}
+
+progress {
+    width: 100%;
+    height: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+progress::-webkit-progress-bar {
+    background-color: #f0f0f0;
+    border-radius: 10px;
+}
+
+progress::-webkit-progress-value {
+    background-color: #4CAF50;
+    border-radius: 10px;
+    transition: width 0.3s;
+}
+
+#progressText {
+    display: block;
+    text-align: center;
+    margin-top: 5px;
+    font-size: 14px;
+    color: #555;
+}
+
+/* Стили для изображений */
+.preview-container {
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 20px 0;
+    border: 2px dashed #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    background: #f9f9f9;
+}
+
+.preview-image, .processed-image {
+    max-width: 100%;
+    max-height: 400px;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.image-info, .success-message, .error-message {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.success-message {
+    color: #4CAF50;
+    font-weight: bold;
+}
+
+.error-message {
+    color: #f44336;
+}
+
+/* Кнопка скачивания */
+#saveToComputer {
+    margin-top: 15px;
+    padding: 10px 20px;
+    background: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+#saveToComputer:hover {
+    background: #0b7dda;
+}
+
+#saveToComputer:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+}
+
+/* Сообщения */
+.success-message {
+    color: #4CAF50;
+    margin-top: 10px;
+}
+
+.error-message {
+    color: #f44336;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Кнопки */
+.btn-primary, .btn-secondary {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s;
+}
+
+.btn-primary {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #45a049;
+}
+
+.btn-secondary {
+    background-color: #2196F3;
+    color: white;
+    margin-left: 10px;
+}
+
+.btn-secondary:hover {
+    background-color: #0b7dda;
+}
+
+.btn-secondary:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
 
 /* =Архиватор */
 .archiver__content {

@@ -18,7 +18,7 @@ import sys
 import uuid
 import torch
 from torchvision import transforms
-import requests
+import requests 
 
 from tracer_model import TracerModel
 
@@ -31,6 +31,21 @@ login_manager.login_view = 'login'
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+# Конфигурации
+UPLOAD_FOLDER = '/home/julia/Documents/РАБОТАЕМ, БРАТЬЯ/static/uploads'
+RESULT_FOLDER = '/home/julia/Documents/РАБОТАЕМ, БРАТЬЯ/static/results'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['RESULT_FOLDER'] = RESULT_FOLDER
+
+# Импорт самой модели
+from tracer_model import TracerModel
+tracer = TracerModel(arch="5", device="cpu")
+
 # ========================
 # Основные маршруты
 # ========================
@@ -38,7 +53,6 @@ def load_user(user_id):
 @app.route('/')
 def index():
     return render_template('index.html')
-
 
 # Главная страница после входа в аккаунт
 @app.route('/account')
@@ -173,55 +187,100 @@ def logout():
 # МОМЕНТ с МОДЕЛЬЮ TRACER
 # =====================================
 
-# ЗАГРУЖАЕМ МОДЕЛЬ
-
-# Пока закомментировала, чтобы сайт вообще открывался
-# tracer = TracerModel("archive/data.pkl")
-
 # Это просто страница с самой моделью, на которой будут обрабатываться фото
 @app.route('/upload', methods=['GET'])
 @login_required
 def upload_page():
     return render_template('upload.html')
 
-# ВОТ ЗДЕСЬ УЖЕ ОБРАБОТКА ФОТО МОДЕЛЬЮ
-@app.route('/upload', methods=['POST'])
+@app.route('/preview', methods=['POST'])
 @login_required
-def handle_upload():
+def preview_image():
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file uploaded'}), 400
+    
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
+    
+    # Сохраняем временный файл для предпросмотра
+    temp_filename = f'preview_{uuid.uuid4().hex[:8]}.jpg'
+    temp_path = os.path.join(app.config['UPLOAD_FOLDER'], temp_filename)
+    file.save(temp_path)
+    
+    return jsonify({
+        'preview_url': f'/uploads/{temp_filename}'
+    })
+
+# ВОТ ЗДЕСЬ УЖЕ ОБРАБОТКА ФОТО МОДЕЛЬЮ
+@app.route('/process_image', methods=['POST'])
+@login_required
+def process_image():
     try:
+        # Проверка наличия файла
         if 'file' not in request.files:
-            return jsonify({'error': 'Файл не выбран'}), 400
+            return jsonify({'error': 'Файл не загружен'}), 400
         
         file = request.files['file']
+        
         if file.filename == '':
             return jsonify({'error': 'Имя файла пустое'}), 400
+        
+        if not allowed_file(file.filename):
+            return jsonify({'error': 'Недопустимый формат файла. Допустимые: png, jpg, jpeg'}), 400
 
+        # Сохраняем временный файл
         temp_filename = f'temp_{uuid.uuid4().hex[:8]}.jpg'
         temp_path = os.path.join(app.config['UPLOAD_FOLDER'], temp_filename)
         file.save(temp_path)
 
+        print(f"Временный файл сохранён по пути: {temp_path}")
+        print(f"Существует ли файл: {os.path.exists(temp_path)}")
+
+        # Обработка изображения моделью
         processed_image = tracer.process_image(temp_path)
-        
-        result_filename = f"res_{uuid.uuid4().hex[:8]}.jpg"
-        result_path = os.path.join(app.config['UPLOAD_FOLDER'], result_filename)
-        cv2.imwrite(result_path, processed_image)
-        
+        print("Изображение обработано моделью")
+
+        # Сохраняем результат
+        result_filename = f'result_{uuid.uuid4().hex[:8]}.png'
+        result_path = os.path.join(app.config['RESULT_FOLDER'], result_filename)
+
+        # Создаём папку, если её нет
+        os.makedirs(app.config['RESULT_FOLDER'], exist_ok=True)
+
+        # Сохраняем как PNG (поддерживает прозрачность)
+        # Переводим RGBA -> BGRA перед сохранением
+        processed_bgra = cv2.cvtColor(processed_image, cv2.COLOR_RGBA2BGRA)
+
+        # Сохраняем как PNG (поддерживает прозрачность)
+        success = cv2.imwrite(result_path, processed_bgra)
+        print(f"Результат сохранён по пути: {result_path}")
+        print(f"Успешно сохранено: {success}")
+
+        if not success:
+            raise Exception("Не удалось сохранить обработанное изображение")
+
+        # Удаляем временный файл
         os.remove(temp_path)
 
+        # Возвращаем ответ клиенту
         return jsonify({
             'success': True,
+            'result_url': f'/static/results/{result_filename}',
+            'message': 'Фон успешно удалён!',
             'filename': result_filename
         })
 
     except Exception as e:
+        import traceback
+        print(f"Ошибка: {traceback.format_exc()}")
         return jsonify({'error': str(e)}), 500
 
-# В папке uploads будут лежать обработанные фото
-@app.route('/uploads/<filename>')
-@login_required
-def get_uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
+# В папке results будут лежать обработанные фото
+@app.route('/static/results/<path:filename>')
+def serve_result(filename):
+    return send_from_directory(app.config['RESULT_FOLDER'], filename)
 
 # ========================
 # РАБОТА С АРХИВАМИ
