@@ -31,11 +31,30 @@ login_manager.login_view = 'login'
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+# ========================
 # Конфигурации
-UPLOAD_FOLDER = '/home/julia/Documents/РАБОТАЕМ, БРАТЬЯ/static/uploads'
-ARCHIVE_FOLDER = '/home/julia/Documents/РАБОТАЕМ, БРАТЬЯ/static/archives'
-RESULT_FOLDER = '/home/julia/Documents/РАБОТАЕМ, БРАТЬЯ/static/results'
+# ========================
 
+# Получаем путь к текущему файлу main.py
+project_root = os.path.dirname(os.path.abspath(__file__))
+
+# Путь к папке static (на уровень выше)
+static_folder = os.path.join(project_root, '../static')
+
+# Создаём папку static, если её нет
+os.makedirs(static_folder, exist_ok=True)
+
+# Путь к папке static (на уровень выше)
+# Определяем подпапки
+UPLOAD_FOLDER = os.path.join(static_folder, 'uploads')
+ARCHIVE_FOLDER = os.path.join(static_folder, 'archives')
+RESULT_FOLDER = os.path.join(static_folder, 'results')
+
+# Создаём все подпапки, если их нет
+for folder in [UPLOAD_FOLDER, ARCHIVE_FOLDER, RESULT_FOLDER]:
+    os.makedirs(folder, exist_ok=True)
+
+# Конфигурация Flask
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['ARCHIVE_FOLDER'] = ARCHIVE_FOLDER
 app.config['RESULT_FOLDER'] = RESULT_FOLDER
