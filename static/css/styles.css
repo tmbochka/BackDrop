@@ -629,7 +629,7 @@ section {
     flex-wrap: wrap;
     justify-content: center;
     gap: 30px;
-    padding: 20px;
+    padding: 40px 20px;
 }
 
 .music-item {
@@ -683,9 +683,10 @@ section {
     display: none; /* Чтобы не было аудиоплеера */
 }
 
+
 .music-item.playing {
-    border: 2px solid #fff;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    border: 2px solid white;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
 }
 
 .music-item .description {

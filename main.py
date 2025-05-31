@@ -33,7 +33,12 @@ def load_user(user_id):
 
 # Конфигурации
 UPLOAD_FOLDER = '/home/julia/Documents/РАБОТАЕМ, БРАТЬЯ/static/uploads'
+ARCHIVE_FOLDER = '/home/julia/Documents/РАБОТАЕМ, БРАТЬЯ/static/archives'
 RESULT_FOLDER = '/home/julia/Documents/РАБОТАЕМ, БРАТЬЯ/static/results'
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['ARCHIVE_FOLDER'] = ARCHIVE_FOLDER
+app.config['RESULT_FOLDER'] = RESULT_FOLDER
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 def allowed_file(filename):
@@ -314,7 +319,7 @@ def upload_and_archive():
                 saved_files.append(filename)
 
         # Тут создание архива
-        archive_path = os.path.join(app.config['UPLOAD_FOLDER'], f'{archive_name}.zip')
+        archive_path = os.path.join(app.config['ARCHIVE_FOLDER'], f'{archive_name}.zip')
         with zipfile.ZipFile(archive_path, 'w') as zipf:
             for filename in saved_files:
                 filepath = os.path.join(temp_dir, filename)
@@ -324,7 +329,8 @@ def upload_and_archive():
         if save_option in ['profile', 'all']:
             new_archive = Archive(
                 filename=f'{archive_name}.zip',
-                user_id=current_user.id
+                user_id=current_user.id,
+                path=archive_path  # если есть поле path в модели Archive
             )
             db.session.add(new_archive)
             db.session.commit()
@@ -351,6 +357,11 @@ def upload_and_archive():
     finally:
         if os.path.exists(temp_dir):
             shutil.rmtree(temp_dir)
+
+@app.route('/download/<path:filename>')
+@login_required
+def download(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename, as_attachment=True)
 
 # Это удаление архива из Профиль -> Архивы
 # Тоже все работает вроде

@@ -99,7 +99,7 @@
                                 <div class="archive__info">
                                     <h3>{{ archive.filename }}</h3>
                                     <a href="{{ url_for('download', filename=archive.filename) }}" class="btn" download>Скачать</a>
-                                    <form action="{{ url_for('delete_archive', filename=archive.filename) }}" method="post" style="display:inline;">
+                                    <form action="{{ url_for('delete_archive', archive_id=archive.id) }}" method="post" style="display:inline;">
                                         <button type="submit" class="btn delete-btn">Удалить</button>
                                     </form>
                                 </div>
