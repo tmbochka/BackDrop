@@ -19,6 +19,13 @@ import uuid
 import torch
 from torchvision import transforms
 import requests 
+import zipfile
+from werkzeug.utils import secure_filename
+from PIL import Image as PILImage
+import cv2
+import numpy as np
+import os
+import uuid
 
 from tracer_model import TracerModel
 
@@ -217,6 +224,7 @@ def logout():
 def upload_page():
     return render_template('upload.html')
 
+# Как выглядит загруженное изображение, "превью"
 @app.route('/preview', methods=['POST'])
 @login_required
 def preview_image():
@@ -349,7 +357,7 @@ def upload_and_archive():
             new_archive = Archive(
                 filename=f'{archive_name}.zip',
                 user_id=current_user.id,
-                path=archive_path  # если есть поле path в модели Archive
+                path=archive_path
             )
             db.session.add(new_archive)
             db.session.commit()
@@ -383,7 +391,6 @@ def download(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename, as_attachment=True)
 
 # Это удаление архива из Профиль -> Архивы
-# Тоже все работает вроде
 @app.route('/delete_archive/<int:archive_id>', methods=['POST'])
 @login_required
 def delete_archive(archive_id):
@@ -405,12 +412,11 @@ def delete_archive(archive_id):
     except Exception as e:
         return jsonify({'success': False, 'message': f'Ошибка удаления: {str(e)}'}), 500
 
-# Уже забыла зачем это, кажется, для иконок
+# Для иконок
 @app.route('/favicon.ico')
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'), 
            'favicon.ico', mimetype='image/vnd.microsoft.icon')
-
 
 
 if __name__ == '__main__':

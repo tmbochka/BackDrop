@@ -27,7 +27,7 @@ class TracerModel:
             print(f"Original image size: {img.shape}")
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             
-            # Сохраняем оригинальные размеры
+            # Сохранение оригинальные размеры
             original_height, original_width = img.shape[:2]
             
             # Применяем преобразования
@@ -35,18 +35,17 @@ class TracerModel:
             batch_t = torch.unsqueeze(img_t, 0).to(self.device)
             
             # Предсказание
-            with torch.no_grad():
+            with torch.no_grad(): # отключаем градиенты
                 outputs, edge_mask, ds_map = self.model(batch_t)
             
-            # Получаем маску и изменяем размер до оригинального
+            # Получаем маску и изменяем размер обратно
             output = outputs[0][0].cpu().numpy()
             print(f"Mask size before resize: {output.shape}")
             
-            # Ресайз маски до оригинальных размеров
+            # И размер маски тоже меняем
             output = cv2.resize(output, (original_width, original_height))
             print(f"Mask size after resize: {output.shape}")
             
-            # Создаем RGBA изображение
             rgba = cv2.cvtColor(img, cv2.COLOR_RGB2RGBA)
             rgba[:, :, 3] = (output * 255).astype('uint8')
             

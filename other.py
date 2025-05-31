@@ -3,6 +3,8 @@ from email.mime.text import MIMEText
 from email.header import Header
 import smtplib
 
+
+# Отправка кода подтверждения на почту
 def send_email(email, subject, text):
     msg = MIMEMultipart()
     msg['From'] = 'julialatypova52@gmail.com'

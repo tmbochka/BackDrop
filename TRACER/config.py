@@ -1,6 +1,5 @@
 from addict import Dict
 
-
 def get_config(arch: int):
     cfg = Dict(
         arch=arch,

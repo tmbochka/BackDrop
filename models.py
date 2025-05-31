@@ -34,7 +34,7 @@ class Archive(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     filename = db.Column(db.String(300), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    path = db.Column(db.String(512))  # ✅ Новое поле
+    path = db.Column(db.String(512))
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
 
     def __repr__(self):

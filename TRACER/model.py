@@ -18,23 +18,19 @@ class TRACER(nn.Module):
             f"efficientnet-b{cfg.arch}", advprop=True, cfg=cfg
         )
 
-        # Receptive Field Blocks
         channels = [int(arg_c) for arg_c in cfg.RFB_aggregated_channel]
         self.rfb2 = RFBBlock(self.channels[1], channels[0])
         self.rfb3 = RFBBlock(self.channels[2], channels[1])
         self.rfb4 = RFBBlock(self.channels[3], channels[2])
 
-        # Multi-level aggregation
         self.agg = Aggregation(channels)
 
-        # Object Attention
         self.ObjectAttention2 = ObjectAttention(channel=self.channels[1], kernel_size=3)
         self.ObjectAttention1 = ObjectAttention(channel=self.channels[0], kernel_size=3)
 
     def forward(self, inputs):
         B, C, H, W = inputs.size()
 
-        # EfficientNet backbone Encoder
         x = self.model.initial_conv(inputs)
         features, edge = self.model.get_blocks(x, H, W)
 

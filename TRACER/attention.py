@@ -6,7 +6,6 @@ from torch.fft import fft2, fftshift, ifft2, ifftshift  # noqa
 import torch.nn as nn
 import torch.nn.functional as F
 
-# SOD
 from TRACER.cnn import BasicConv2d, DWConv, DWSConv
 
 
@@ -55,18 +54,20 @@ class FrequencyEdgeModule(nn.Module):
         return mask
 
     def forward(self, x):
-        """
+        """Улучшаем информацию про края
         Input:
             The first encoder block representation: (B, C, H, W)
         Returns:
             Edge refined representation: X + edge (B, C, H, W)
         """
+        # Переводим изображение в частотную область (+ добавлено в презентацию)
         x_fft = fft2(x, dim=(-2, -1))
         x_fft = fftshift(x_fft)
 
-        # Mask -> low, high separate
+        # Мака частот, чтобы остались только высокие
         mask = self.mask_radial(img=x, r=self.radius).to(x.device)
         high_frequency = x_fft * (1 - mask)
+        # Возвращаем изображение обратно (<==> обратное преобразование Фурье)
         x_fft = ifftshift(high_frequency)
         x_fft = ifft2(x_fft, dim=(-2, -1))
         x_H = torch.abs(x_fft)
@@ -89,7 +90,7 @@ class FrequencyEdgeModule(nn.Module):
         )
         edge = torch.relu(self.conv(edge_maks))
 
-        x = x + edge  # Feature + Masked Edge information
+        x = x + edge  # Добавляем больше информации про края
 
         return x, edge
 
@@ -233,6 +234,14 @@ class UnionAttentionModule(nn.Module):
         return masked_x
 
     def ChannelTracer(self, x):
+        """ Веса внимания для каждого канала (усиляет важные, ослабевает слабые :) )
+        Inputs: 
+            x - тензор [B, C, H, W]
+                    B - размер батча
+                    C - количество каналов
+                    H, W - высота и ширина
+        """
+
         avg_pool = self.GAP(x)
         x_norm = self.norm(avg_pool)
 
@@ -240,11 +249,10 @@ class UnionAttentionModule(nn.Module):
         k = self.channel_k(x_norm).squeeze(-1)
         v = self.channel_v(x_norm).squeeze(-1)
 
-        # softmax(Q*K^T)
+        # Матрица внимания + нормирование через Софтмакс
         QK_T = torch.matmul(q, k.transpose(1, 2))
         alpha = F.softmax(QK_T, dim=-1)
 
-        # a*v
         att = torch.matmul(alpha, v).unsqueeze(-1)
         att = self.fc(att)
         att = self.sigmoid(att)
@@ -262,7 +270,6 @@ class UnionAttentionModule(nn.Module):
         k = self.spatial_k(x_drop).squeeze(1)
         v = self.spatial_v(x_drop).squeeze(1)
 
-        # softmax(Q*K^T)
         QK_T = torch.matmul(q, k.transpose(1, 2))
         alpha = F.softmax(QK_T, dim=-1)
 
@@ -346,13 +353,11 @@ class ObjectAttention(nn.Module):
     def forward(self, decoder_map, encoder_map):
         """
         Args:
-            decoder_map: decoder representation (B, 1, H, W).
-            encoder_map: encoder block output (B, C, H, W).
-        Returns:
-            decoder representation: (B, 1, H, W)
+            decoder_map: карта внимания [B, 1, H, W].
+            encoder_map: карта признаков [B, C, H, W]
         """
-        mask_bg = -1 * torch.sigmoid(decoder_map) + 1  # Sigmoid & Reverse
-        mask_ob = torch.sigmoid(decoder_map)  # object attention
+        mask_bg = -1 * torch.sigmoid(decoder_map) + 1  # инвертированная маска
+        mask_ob = torch.sigmoid(decoder_map)  # маска объекта
         x = mask_ob.expand(-1, self.channel, -1, -1).mul(encoder_map)
 
         edge = mask_bg.clone()
