@@ -72,13 +72,13 @@
                     <h2>Работы</h2>
                     <a href="/upload" class="btn">Пополнить портфолио</a>
                     <div class="portfolio__gallery">
-                        {% for image in images %}
+                        {% for work in works %}
                             <div class="portfolio__item">
-                                <img src="{{ url_for('static', filename='uploads/' + image.filename) }}" alt="Фотография" loading="lazy">
+                                <img src="{{ url_for('static', filename='results/' + work.filename) }}" alt="Обработанное фото" loading="lazy">
                                 <div class="portfolio__info">
-                                    <h3>{{ image.filename }}</h3>
-                                    <a href="{{ url_for('download', filename=image.filename) }}" class="btn">Скачать</a>
-                                    <form action="{{ url_for('delete_image', filename=image.filename) }}" method="post" style="display:inline;">
+                                    <h3>{{ work.filename }}</h3>
+                                    <a href="{{ url_for('static', filename='results/' + work.filename) }}" class="btn" download>Скачать</a>
+                                    <form action="{{ url_for('delete_work', work_id=work.id) }}" method="post" style="display:inline;">
                                         <button type="submit" class="btn delete-btn">Удалить</button>
                                     </form>
                                 </div>
@@ -86,7 +86,6 @@
                         {% endfor %}
                     </div>
                 </div>
-
                 <div id="archives" class="tab-content" style="display: none;">
                     <h2>Архивы</h2>
                     <a href="/archiver" class="btn">Еще нет архива?</a>

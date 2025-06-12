@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, send_from_directory, jsonify, send_file
 from flask_login import LoginManager, login_user, login_required, current_user, logout_user
 from app_and_db import app, db
-from models import User, Image, Archive, create_user, get_user_by_email
+from models import User, Image, Archive, ProcessedWork, create_user, get_user_by_email
 from other import send_email
 import random
 import zipfile
@@ -26,6 +26,8 @@ import cv2
 import numpy as np
 import os
 import uuid
+import tempfile
+
 
 from tracer_model import TracerModel
 
@@ -97,7 +99,8 @@ def account():
 def portfolio():
     images = Image.query.filter_by(user_id=current_user.id).all()
     archives = Archive.query.filter_by(user_id=current_user.id).all()
-    return render_template('portfolio.html', images=images, archives=archives)
+    works = ProcessedWork.query.filter_by(user_id=current_user.id).all()  # Новые работы
+    return render_template('portfolio.html', images=images, archives=archives, works=works)
 
 # Страница архиватора
 @app.route('/archiver')
@@ -309,10 +312,127 @@ def process_image():
         return jsonify({'error': str(e)}), 500
 
 
+@app.route('/process_images_in_archive', methods=['POST'])
+@login_required
+def process_images_in_archive():
+    try:
+        if 'files' not in request.files:
+            return jsonify({'success': False, 'message': 'Файлы не получены'}), 400
+
+        files = request.files.getlist('files')
+        results = {}
+        processed_files = []
+
+        for file in files:
+            if file.filename == '':
+                continue
+
+            # Сохраняем оригинал
+            temp_path = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(file.filename))
+            file.save(temp_path)
+
+            # Обрабатываем через модель
+            processed_image = tracer.process_image(temp_path)
+            result_filename = f'result_{uuid.uuid4().hex[:8]}.png'
+            result_path = os.path.join(app.config['RESULT_FOLDER'], result_filename)
+
+            # Сохраняем как PNG
+            cv2.imwrite(result_path, cv2.cvtColor(processed_image, cv2.COLOR_RGBA2BGRA))
+
+            # Удаляем оригинал
+            os.remove(temp_path)
+
+            # Сохраняем имя
+            results[file.filename] = result_filename
+            processed_files.append(result_path)
+
+        # Архивируем результаты
+        archive_name = f'processed_batch_{uuid.uuid4().hex}.zip'
+        archive_path = os.path.join(app.config['RESULT_FOLDER'], archive_name)
+
+        with zipfile.ZipFile(archive_path, 'w') as zipf:
+            for path in processed_files:
+                zipf.write(path, os.path.basename(path))
+
+        session['batch_archive'] = archive_name
+
+        return jsonify({
+            'success': True,
+            'message': 'Все изображения обработаны.',
+            'filenames': results
+        })
+
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/download_processed_archive')
+@login_required
+def download_processed_archive():
+    archive_name = session.get('batch_archive')
+    if not archive_name:
+        return jsonify({'success': False, 'error': 'Нет архива для скачивания'}), 404
+
+    return send_from_directory(
+        app.config['RESULT_FOLDER'],
+        archive_name,
+        as_attachment=True,
+        download_name=archive_name
+    )
+
+@app.route('/save_to_portfolio', methods=['POST'])
+@login_required
+def save_to_portfolio():
+    if 'file' not in request.files:
+        return jsonify({'success': False, 'message': 'Файл не загружен'}), 400
+
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'success': False, 'message': 'Имя файла пустое'}), 400
+
+    # Сохраняем файл в /static/results/
+    result_folder = app.config['RESULT_FOLDER']
+    filename = secure_filename(file.filename)
+    file.save(os.path.join(result_folder, filename))
+
+    # Сохраняем в БД
+    work = ProcessedWork(
+        filename=filename,
+        user_id=current_user.id
+    )
+    db.session.add(work)
+    db.session.commit()
+
+    return jsonify({
+        'success': True,
+        'message': 'Работа успешно сохранена в портфолио!'
+    })
+
+@app.route('/delete_work/<int:work_id>', methods=['POST'])
+@login_required
+def delete_work(work_id):
+    work = ProcessedWork.query.filter_by(id=work_id, user_id=current_user.id).first()
+    if not work:
+        return jsonify({'success': False, 'message': 'Работа не найдена'}), 404
+
+    try:
+        # Удаляем файл
+        filepath = os.path.join(app.config['RESULT_FOLDER'], work.filename)
+        if os.path.exists(filepath):
+            os.remove(filepath)
+
+        # Удаляем запись из БД
+        db.session.delete(work)
+        db.session.commit()
+
+        return jsonify({'success': True, 'message': 'Работа удалена'})
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Ошибка: {str(e)}'}), 500
+
 # В папке results будут лежать обработанные фото
 @app.route('/static/results/<path:filename>')
 def serve_result(filename):
     return send_from_directory(app.config['RESULT_FOLDER'], filename)
+
 
 # ========================
 # РАБОТА С АРХИВАМИ

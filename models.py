@@ -40,6 +40,14 @@ class Archive(db.Model):
     def __repr__(self):
         return '<Archive {}>'.format(self.filename)
 
+class ProcessedWork(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    filename = db.Column(db.String(255), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    def __repr__(self):
+        return f'<ProcessedWork {self.filename}>'
+
 def create_user(name, email, password):
     new_user = User(name=name, email=email, password_hash=generate_password_hash(password))
     db.session.add(new_user)

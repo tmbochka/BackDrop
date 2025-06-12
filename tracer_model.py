@@ -13,7 +13,7 @@ class TracerModel:
         self.cfg = get_config(int(arch))
         self.transform = get_test_augmentation(self.cfg.img_size)
         self.model = load_model(self.cfg, device=device)
-        self.model.eval()
+        self.model.eval() # чтобы модель только предсказывала, без обучения
         self.device = device
     
     def process_image(self, image_path):
@@ -25,6 +25,7 @@ class TracerModel:
                 raise ValueError("Не удалось загрузить изображение")
             
             print(f"Original image size: {img.shape}")
+            # Переводим в RGB
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             
             # Сохранение оригинальные размеры
@@ -35,8 +36,12 @@ class TracerModel:
             batch_t = torch.unsqueeze(img_t, 0).to(self.device)
             
             # Предсказание
-            with torch.no_grad(): # отключаем градиенты
-                outputs, edge_mask, ds_map = self.model(batch_t)
+            with torch.no_grad(): # отключаем градиенты, чтобы модель предсказывала
+                # outputs — итоговая маска - что оставить, а что убрать
+                # edge_mask — контур главного объекта
+                # ds_map — карта деталей
+                outputs, edge_mask, ds_map = self.model(batch_t) 
+     
             
             # Получаем маску и изменяем размер обратно
             output = outputs[0][0].cpu().numpy()
@@ -46,6 +51,7 @@ class TracerModel:
             output = cv2.resize(output, (original_width, original_height))
             print(f"Mask size after resize: {output.shape}")
             
+            # Добавляем альфа-канал, чтобы маска сказала: 0 - фон, 1 - объект
             rgba = cv2.cvtColor(img, cv2.COLOR_RGB2RGBA)
             rgba[:, :, 3] = (output * 255).astype('uint8')
             

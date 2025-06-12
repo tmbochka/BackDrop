@@ -836,7 +836,7 @@ section {
 /* =Вот это уже портфолио с работами */
 .portfolio__content {
     margin: 0 var(--h-gutter);
-    padding-bottom: 40px; /* Добавляем отступ снизу */
+    padding-bottom: 100px; /* Добавляем отступ снизу */
 }
 
 .portfolio__content h2 {
@@ -910,10 +910,18 @@ section {
     background-color: #ff4d4d;
     color: white;
     border: none;
-    border-radius: 15px;
-    cursor: pointer;
     font-size: 12px;
+    cursor: pointer;
     margin-left: 5px;
+    padding: 6px 12px;
+    border-radius: 25px;
+    white-space: nowrap;
+    min-width: 80px;
+    text-align: center;
+}
+
+.delete-btn:hover {
+    background-color: #e60000;
 }
 
 .portfolio__info .delete-btn:hover,
@@ -984,6 +992,7 @@ section {
     background-color: var(--bcg-lightgreen);
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding-bottom: 100px;
 }
 
 .upload__content h2 {
@@ -1366,6 +1375,7 @@ progress::-webkit-progress-value {
     display: flex;
     justify-content: space-between;
     padding: 20px;
+    padding-bottom: 100px;
     background-color: var(--bcg-lightgreen);
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -1488,6 +1498,47 @@ button[type="submit"]:hover {
     background-color: rgba(0, 0, 0, 0.7);
 }
 /* Архиватор */
+
+
+
+
+.thumbnail-wrapper {
+    position: relative;
+    display: inline-block;
+    margin: 5px;
+    width: 100px;
+    height: 100px;
+    overflow: hidden;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+}
+
+.thumbnail-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.delete-btn {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border: none;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 0 6px;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease;
+}
+
 
 /* =Профиль */
 .profile__content {

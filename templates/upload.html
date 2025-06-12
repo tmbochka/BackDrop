@@ -6,97 +6,102 @@
     <title>BackDrop - Загрузка фотографий</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    
+
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/upload.js') }}" defer></script>
-
     <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap" rel="stylesheet">
 </head>
 
 <body class="is-loading" data-barba="wrapper">
 
-    <div class="loader">
-        <div class="loader__mask">
-            <div class="inner">
-                <div class="progress"></div>
-            </div>
-        </div>
-    </div>
-    <div class="loader__content">
+<div class="loader">
+    <div class="loader__mask">
         <div class="inner">
-            <div class="loader__title">
-                <div class="loader__title--mask"><span>Добро</span></div>
-                <div class="loader__title--mask"><span>Пожаловать!</span></div>
-            </div>
-            <div class="loader__image">
-                <div class="loader__image--mask">
-                    <img src="{{ url_for('static', filename='img/aest.jpg') }}" />
-                </div>
+            <div class="progress"></div>
+        </div>
+    </div>
+</div>
+<div class="loader__content">
+    <div class="inner">
+        <div class="loader__title">
+            <div class="loader__title--mask"><span>Добро</span></div>
+            <div class="loader__title--mask"><span>Пожаловать!</span></div>
+        </div>
+        <div class="loader__image">
+            <div class="loader__image--mask">
+                <img src="{{ url_for('static', filename='img/aest.jpg') }}" />
             </div>
         </div>
     </div>
+</div>
 
-    <div class="logo">
-        <span class="logo__text">BackDrop</span>
-    </div>
-    <nav class="main-nav">
-        <ul>
-            <li><a href="/account">Главная</a></li>
-            <li><a href="/portfolio">Портфолио</a></li>
-            <li><a href="/archiver">Архиватор</a></li>
-            <li><a href="/music">Музыка</a></li>
-            <li><a href="/background">Фон</a></li>
-            <li><a href="/profile">Выход</a></li>
-            <li><a href="/account#0">Связаться с нами</a></li>
-        </ul>
-    </nav>
+<div class="logo">
+    <span class="logo__text">BackDrop</span>
+</div>
+<nav class="main-nav">
+    <ul>
+        <li><a href="/account">Главная</a></li>
+        <li><a href="/portfolio">Портфолио</a></li>
+        <li><a href="/archiver">Архиватор</a></li>
+        <li><a href="/music">Музыка</a></li>
+        <li><a href="/background">Фон</a></li>
+        <li><a href="/profile">Выход</a></li>
+        <li><a href="/account#0">Связаться с нами</a></li> 
+    </ul>
+</nav>
 
-    <div id="viewport">
-        <main id="main" data-barba="container">
-            <header data-color="#ACB7AE">
-                <h1>
-                    <span>Загрузка фотографий</span>
-                </h1>
-            </header>
-            
-            <div class="upload__content">
+<div id="viewport">
+    <main id="main" data-barba="container">
+        <header data-color="#ACB7AE">
+            <h1>
+                <span>Загрузка фотографий</span>
+            </h1>
+        </header>
+
+        <div class="upload__content">
+            <!-- Вкладки -->
+            <div class="upload-tabs">
+                <button class="tab-button active" data-tab="image">Изображение</button>
+                <button class="tab-button" data-tab="archive">Архив</button>
+            </div>
+
+            <!-- Форма для одного изображения -->
+            <div id="image" class="tab-content" style="display: block;">
                 <form id="uploadForm" method="POST" enctype="multipart/form-data" class="upload__form">
                     <div class="form-group">
-                        <label for="file">Выбрать фотографию или архив:</label>
-                        <input type="file" id="file" name="file" accept="image/*,application/zip" class="form-control">
-                        <a href="/archiver" class="form-link">Еще нет архива?</a>
+                        <label for="file">Выбрать фотографию:</label>
+                        <input type="file" id="file" name="file" accept="image/*" class="form-control">
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="newName">Название нового изображения:</label>
-                        <input type="text" id="newName" name="newName" class="form-control" placeholder="Введите название">
+                        <input type="text" id="newName" name="newName" class="form-control"
+                               placeholder="Введите название">
                     </div>
-                    
-                    <!-- Модель пока одна, ибо нужно чтобы она хотя бы заработала -->
+
                     <div class="form-group">
                         <label for="model">Выберите модель:</label>
                         <div class="form-row">
-                            <select id="model" name="model" class="form-control">
+                            <select id="model" class="form-control">
                                 <option value="tracer-efficient">TRACER Efficient</option>
                             </select>
                             <button type="button" id="applyModel" class="btn-primary">Применить модель</button>
                         </div>
                     </div>
-                    
+
                     <div id="processedImageContainer" class="preview-container">
                         <div class="preview-placeholder">
                             <ion-icon name="image-outline"></ion-icon>
                             <p>Здесь будет предпросмотр</p>
                         </div>
                     </div>
-                    
-                    <!-- ДОЛЖЕН БЫТЬ КРАСИВЫЙ ПРОГРЕСС БАР, НО ТУТ ПОКА НИЧЕГО НЕ РАБОТАЕТ -->
+
                     <div id="progressContainer" class="progress-container">
                         <progress id="progressBar" value="0" max="100"></progress>
                         <span id="progressText">0%</span>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="backgroundOption">Выберите фон:</label>
                         <select id="backgroundOption" name="backgroundOption" class="form-control">
@@ -105,26 +110,86 @@
                             <option value="color">Заменить на цвет</option>
                         </select>
                     </div>
-                    
+
                     <div class="form-actions">
-                        <button type="button" id="saveToComputer" class="btn-secondary" disabled>Сохранить на компьютер</button>
-                        <button type="button" id="saveToPortfolio" class="btn-secondary" disabled>Сохранить в портфолио</button>
-                        <button type="button" id="saveToArchives" class="btn-secondary" disabled>Сохранить в архивы</button>
+                        <button type="button" id="saveToComputer" class="btn-secondary" disabled>Сохранить на компьютер
+                        </button>
+                        <button type="button" id="saveToPortfolio" class="btn-secondary" disabled>Сохранить в портфолио
+                        </button>
                     </div>
                 </form>
             </div>
-        </main>
-        
-        <aside class="fill-background"></aside>
-    </div>
 
-    
-    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>    
-    <script src="https://unpkg.com/@barba/core"></script>
-    <script src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.4.0/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.4.0/ScrollTrigger.min.js"></script>
-    <script src="https://unpkg.com/smooth-scrollbar@latest/dist/smooth-scrollbar.js"></script>
+            <!-- Форма для работы с архивом -->
+            <div id="archive" class="tab-content" style="display: none;">
+                <form id="archiveForm" enctype="multipart/form-data" class="upload__form">
+                    <div class="form-group">
+                        <label for="zipUpload">Загрузить ZIP-архив:</label>
+                        <input type="file" id="zipUpload" accept=".zip" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="archiveName">Название нового архива:</label>
+                        <input type="text" id="archiveName" class="form-control"
+                               placeholder="Введите название архива">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="archiveModel">Выберите модель:</label>
+                        <div class="form-row">
+                            <select id="archiveModel" class="form-control">
+                                <option value="tracer-efficient">TRACER Efficient</option>
+                            </select>
+                            <button type="button" id="applyModelAll" class="btn-primary">Применить модель</button>
+                        </div>
+                    </div>
+
+                    <!-- Миниатюры -->
+                    <div class="thumbnails-container" style="
+                        display: flex;
+                        overflow-x: auto;
+                        margin-top: 10px;
+                        padding: 10px;
+                        border: 1px solid #ccc;
+                        max-width: 100%;
+                        white-space: nowrap;">
+                    </div>
+
+                    <!-- Прогресс-бар -->
+                    <div class="batch-progress-container">
+                        <progress class="batch-progress-bar" value="0" max="100"></progress>
+                        <span class="batch-progress-text">0%</span>
+                    </div>
+
+                    <!-- Кнопки действий -->
+                    <div class="form-actions">
+                        <button type="button" id="saveBatchToComputer" class="btn-secondary" disabled>Сохранить на
+                            компьютер
+                        </button>
+                        <button type="button" id="saveToPortfolio" class="btn-secondary" disabled>Сохранить в портфолио
+                        </button>
+                        <button type="button" id="saveToArchives" class="btn-secondary" disabled>Сохранить в архивы
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+    <aside class="fill-background"></aside>
+</div>
+
+<!-- Ionicons -->
+<script type="module"
+        src="https://cdn.jsdelivr.net/npm/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script> 
+<script nomodule
+        src="https://cdn.jsdelivr.net/npm/ionicons@7.1.0/dist/ionicons/ionicons.js"></script> 
+
+<!-- Библиотеки -->
+<script src="https://cdn.jsdelivr.net/npm/@barba/core"></script> 
+<script src="https://cdn.jsdelivr.net/npm/imagesloaded@4/imagesloaded.pkgd.min.js"></script> 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.4.0/gsap.min.js"></script> 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.4.0/ScrollTrigger.min.js"></script> 
+<script src="https://cdn.jsdelivr.net/npm/smooth-scrollbar@latest/dist/smooth-scrollbar.js"></script> 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script> 
 </body>
 </html>
