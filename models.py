@@ -49,7 +49,8 @@ class ProcessedWork(db.Model):
         return f'<ProcessedWork {self.filename}>'
 
 def create_user(name, email, password):
-    new_user = User(name=name, email=email, password_hash=generate_password_hash(password))
+    password_hash = generate_password_hash(password)
+    new_user = User(name=name, email=email, password_hash=password_hash)
     db.session.add(new_user)
     db.session.commit()
 
